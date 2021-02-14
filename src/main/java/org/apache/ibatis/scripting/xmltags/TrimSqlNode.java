@@ -101,9 +101,25 @@ public class TrimSqlNode implements SqlNode {
     }
 
     private class FilteredDynamicContext extends DynamicContext {
+
+        /**
+         * 被代理的上下文
+         */
         private DynamicContext delegate;
+
+        /**
+         * 是否调用过 #applyPrefix 方法
+         */
         private boolean prefixApplied;
+
+        /**
+         * 是否调用过 #applySuffix 方法
+         */
         private boolean suffixApplied;
+
+        /**
+         * sql 片段
+         */
         private StringBuilder sqlBuffer;
 
         public FilteredDynamicContext(DynamicContext delegate) {
@@ -155,12 +171,14 @@ public class TrimSqlNode implements SqlNode {
                 if (prefixesToOverride != null) {
                     for (String toRemove : prefixesToOverride) {
                         if (trimmedUppercaseSql.startsWith(toRemove)) {
+                            // 删除前缀
                             sql.delete(0, toRemove.trim().length());
                             break;
                         }
                     }
                 }
                 if (prefix != null) {
+                    // 添加前缀
                     sql.insert(0, " ");
                     sql.insert(0, prefix);
                 }
@@ -175,12 +193,14 @@ public class TrimSqlNode implements SqlNode {
                         if (trimmedUppercaseSql.endsWith(toRemove) || trimmedUppercaseSql.endsWith(toRemove.trim())) {
                             int start = sql.length() - toRemove.trim().length();
                             int end = sql.length();
+                            // 删除后缀
                             sql.delete(start, end);
                             break;
                         }
                     }
                 }
                 if (suffix != null) {
+                    // 添加后缀
                     sql.append(" ");
                     sql.append(suffix);
                 }

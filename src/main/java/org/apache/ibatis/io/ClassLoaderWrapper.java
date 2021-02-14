@@ -27,8 +27,14 @@ import java.net.URL;
  */
 public class ClassLoaderWrapper {
 
+    /**
+     * 默认的类加载器
+     */
     ClassLoader defaultClassLoader;
 
+    /**
+     * 系统类加载器
+     */
     ClassLoader systemClassLoader;
 
     ClassLoaderWrapper() {
@@ -40,6 +46,8 @@ public class ClassLoaderWrapper {
     }
 
     /**
+     * 获取 URL
+     * <p>
      * Get a resource as a URL using the current class path
      *
      * @param resource - the resource to locate
@@ -50,6 +58,8 @@ public class ClassLoaderWrapper {
     }
 
     /**
+     * 获取类路径下的 URL
+     * <p>
      * Get a resource from the classpath, starting with a specific class loader
      *
      * @param resource    - the resource to find
@@ -61,6 +71,8 @@ public class ClassLoaderWrapper {
     }
 
     /**
+     * 获取 InputStream
+     * <p>
      * Get a resource from the classpath
      *
      * @param resource - the resource to find
@@ -71,6 +83,8 @@ public class ClassLoaderWrapper {
     }
 
     /**
+     * 获取 InputStream
+     * <p>
      * Get a resource from the classpath, starting with a specific class loader
      *
      * @param resource    - the resource to find
@@ -82,6 +96,8 @@ public class ClassLoaderWrapper {
     }
 
     /**
+     * 从类路径下加载类
+     * <p>
      * Find a class on the classpath (or die trying)
      *
      * @param name - the class to look for
@@ -93,6 +109,8 @@ public class ClassLoaderWrapper {
     }
 
     /**
+     * 从类路径下加载类
+     * <p>
      * Find a class on the classpath, starting with a specific classloader (or die trying)
      *
      * @param name        - the class to look for
@@ -105,6 +123,8 @@ public class ClassLoaderWrapper {
     }
 
     /**
+     * 获取 InputStream
+     * <p>
      * Try to get a resource from a group of classloaders
      *
      * @param resource    - the resource to get
@@ -132,6 +152,8 @@ public class ClassLoaderWrapper {
     }
 
     /**
+     * 获取 URL
+     * <p>
      * Get a resource as a URL using the current class path
      *
      * @param resource    - the resource to locate
@@ -171,6 +193,8 @@ public class ClassLoaderWrapper {
     }
 
     /**
+     * 使用给定的类加载器加载类
+     * <p>
      * Attempt to load a class from a group of classloaders
      *
      * @param name        - the class to load
@@ -200,6 +224,12 @@ public class ClassLoaderWrapper {
 
     }
 
+    /**
+     * 获取类加载器
+     *
+     * @param classLoader
+     * @return
+     */
     ClassLoader[] getClassLoaders(ClassLoader classLoader) {
         return new ClassLoader[]{
             classLoader,

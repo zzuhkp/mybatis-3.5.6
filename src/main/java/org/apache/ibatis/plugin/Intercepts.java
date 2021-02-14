@@ -22,6 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 拦截器注解，用于指定要拦截的方法
+ * <p>
  * The annotation that specify target methods to intercept.
  *
  * <b>How to use:</b>
@@ -40,6 +42,7 @@ import java.lang.annotation.Target;
  *   }
  * }
  * </pre>
+ *
  * @author Clinton Begin
  */
 @Documented

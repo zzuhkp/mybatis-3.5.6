@@ -210,7 +210,7 @@ public class Configuration {
     protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
     /**
-     * 属性变量，用于解析 xml 中字符串内的${property}变量
+     * 属性变量，方法传递或解析 xml properties 节点获取，用于解析 xml 中字符串内的${property}变量
      */
     protected Properties variables = new Properties();
 
@@ -237,6 +237,7 @@ public class Configuration {
      * 根据配置的 DatabaseIdProvider 获取的数据库ID
      */
     protected String databaseId;
+
     /**
      * 指定一个提供 Configuration 实例的类。 这个被返回的 Configuration 实例用来加载被反序列化对象的延迟加载属性值。
      * 这个类必须包含一个签名为static Configuration getConfiguration() 的方法。（新增于 3.2.3）
@@ -256,11 +257,14 @@ public class Configuration {
      * 插件列表
      */
     protected final InterceptorChain interceptorChain = new InterceptorChain();
+
     protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry(this);
+
     /**
      * TypeAlias 注册中心
      */
     protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+
     /**
      * LanguageDriver 注册中心
      */
@@ -272,6 +276,7 @@ public class Configuration {
     protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
         .conflictMessageProducer((savedValue, targetValue) ->
             ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
+
     /**
      * namespace（Mapper 接口全限定名） -> Cache
      */
@@ -294,16 +299,21 @@ public class Configuration {
      */
     protected final Set<String> loadedResources = new HashSet<>();
 
+    /**
+     * mapper.xml 文件 /mapper/sql 节点抽象：id -> 节点
+     */
     protected final Map<String, XNode> sqlFragments = new StrictMap<>("XML fragments parsed from previous mappers");
 
     /**
      * mapper 配置文件中不能解析的 /mapper/insert/delete/update/select
      */
     protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
+
     /**
-     * mapper 配置文件中不能解析的 cache-ref <-namespace 不存在
+     * mapper 配置文件中不能解析的 cache-ref <- namespace 不存在
      */
     protected final Collection<CacheRefResolver> incompleteCacheRefs = new LinkedList<>();
+
     /**
      * mapper 配置文件中不能解析的 resultMap <- extend 不存在
      */
@@ -813,6 +823,17 @@ public class Configuration {
         return resultSetHandler;
     }
 
+    /**
+     * 创建语句处理器
+     *
+     * @param executor        执行器
+     * @param mappedStatement 映射的语句
+     * @param parameterObject 查询参数
+     * @param rowBounds       分页信息
+     * @param resultHandler   结果处理器
+     * @param boundSql        带参数信息的 SQL
+     * @return
+     */
     public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
         StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
         statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
@@ -1030,7 +1051,9 @@ public class Configuration {
         cacheRefMap.put(namespace, referencedNamespace);
     }
 
-    /*
+    /**
+     * 解析没有处理完的节点
+     * <p>
      * Parses all the unprocessed statement nodes in the cache. It is recommended
      * to call this method once all the mappers are added as it provides fail-fast
      * statement validation.

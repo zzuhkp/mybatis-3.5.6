@@ -32,22 +32,75 @@ import org.apache.ibatis.reflection.ParamNameUtil;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * mapper 文件中 /mapper/resultMap 节点的抽象
+ *
  * @author Clinton Begin
  */
 public class ResultMap {
+
+    /**
+     * 配置
+     */
     private Configuration configuration;
 
+    /**
+     * resultMap 标识
+     */
     private String id;
+
+    /**
+     * resultMap 标识的 Java 类型
+     */
     private Class<?> type;
+
+    /**
+     * 所有的列映射关系，包含 id|result|association|collection 节点对应的映射
+     */
     private List<ResultMapping> resultMappings;
+
+    /**
+     * 表示 Java 对象标识 的映射
+     */
     private List<ResultMapping> idResultMappings;
+
+    /**
+     * constructor 节点下的映射
+     */
     private List<ResultMapping> constructorResultMappings;
+
+    /**
+     * 普通的属性映射
+     */
     private List<ResultMapping> propertyResultMappings;
+
+    /**
+     * 映射的列名
+     */
     private Set<String> mappedColumns;
+
+    /**
+     * 映射的类属性名
+     */
     private Set<String> mappedProperties;
+
+    /**
+     * 鉴别器
+     */
     private Discriminator discriminator;
+
+    /**
+     * 是否存在嵌套的 resultMap，即 collection|association 节点存在 resultMap 属性且不存在 resultSet 属性
+     */
     private boolean hasNestedResultMaps;
+
+    /**
+     * 是否存在嵌套查询
+     */
     private boolean hasNestedQueries;
+
+    /**
+     * 是否开启自动映射，该属性将覆盖全局配置 autoMappingBehavior
+     */
     private Boolean autoMapping;
 
     private ResultMap() {
@@ -160,6 +213,12 @@ public class ResultMap {
             return null;
         }
 
+        /**
+         * @param constructorArgNames
+         * @param paramTypes
+         * @param paramNames
+         * @return
+         */
         private boolean argTypesMatch(final List<String> constructorArgNames,
                                       Class<?>[] paramTypes, List<String> paramNames) {
             for (int i = 0; i < constructorArgNames.size(); i++) {
@@ -179,6 +238,12 @@ public class ResultMap {
             return true;
         }
 
+        /**
+         * 获取构造器的参数名
+         *
+         * @param constructor
+         * @return
+         */
         private List<String> getArgNames(Constructor<?> constructor) {
             List<String> paramNames = new ArrayList<>();
             List<String> actualParamNames = null;

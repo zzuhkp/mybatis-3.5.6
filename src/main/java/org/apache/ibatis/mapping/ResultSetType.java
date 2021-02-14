@@ -23,7 +23,10 @@ import java.sql.ResultSet;
  * @author Clinton Begin
  */
 public enum ResultSetType {
+
     /**
+     * 默认的结果集类型，由驱动指定
+     * <p>
      * behavior with same as unset (driver dependent).
      *
      * @since 3.5.0
@@ -34,7 +37,15 @@ public enum ResultSetType {
      * ResultSet 的游标位置只能向前移动
      */
     FORWARD_ONLY(ResultSet.TYPE_FORWARD_ONLY),
+
+    /**
+     * 可滚动，对数据更改不敏感
+     */
     SCROLL_INSENSITIVE(ResultSet.TYPE_SCROLL_INSENSITIVE),
+
+    /**
+     * 可混动，对数据更改敏感
+     */
     SCROLL_SENSITIVE(ResultSet.TYPE_SCROLL_SENSITIVE);
 
     private final int value;

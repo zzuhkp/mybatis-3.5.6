@@ -35,8 +35,14 @@ import org.apache.ibatis.session.Configuration;
  */
 public final class MappedStatement {
 
+    /**
+     * /configuration/mappers/mapper 节点的 url 或 url 属性
+     */
     private String resource;
 
+    /**
+     * 配置
+     */
     private Configuration configuration;
 
     /**
@@ -44,38 +50,86 @@ public final class MappedStatement {
      */
     private String id;
 
+    /**
+     * 驱动程序每次批量返回的结果行数
+     */
     private Integer fetchSize;
 
+    /**
+     * 驱动程序等待数据库返回结果的秒数
+     */
     private Integer timeout;
 
+    /**
+     * 语句类型
+     */
     private StatementType statementType;
 
+    /**
+     * 结果集类型
+     */
     private ResultSetType resultSetType;
 
+    /**
+     * LangDriver 获取的 SqlSource
+     */
     private SqlSource sqlSource;
 
+    /**
+     * 缓存对象
+     */
     private Cache cache;
 
+    /**
+     * parameterType 或 parameterMap 抽象
+     */
     private ParameterMap parameterMap;
 
+    /**
+     * 语句中包含的  resultMap，存在多个是由于 resultMap 属性中配置了多个用逗号分隔的 resultMap
+     */
     private List<ResultMap> resultMaps;
 
+    /**
+     * 是否刷新缓存
+     */
     private boolean flushCacheRequired;
 
+    /**
+     * 是否使用缓存
+     */
     private boolean useCache;
 
+    /**
+     * select 节点 resultOrdered 属性值
+     */
     private boolean resultOrdered;
 
+    /**
+     * SQL 类型
+     */
     private SqlCommandType sqlCommandType;
 
+    /**
+     * 主键生成器
+     */
     private KeyGenerator keyGenerator;
 
+    /**
+     * insert|update|selectKey 节点 keyProperty 属性值，用于主键生成
+     */
     private String[] keyProperties;
 
+    /**
+     * insert|update|selectKey 节点 keyColumn 属性值，用于主键生成
+     */
     private String[] keyColumns;
 
     private boolean hasNestedResultMaps;
 
+    /**
+     * 语句适用的数据库标识
+     */
     private String databaseId;
 
     /**
@@ -83,8 +137,14 @@ public final class MappedStatement {
      */
     private Log statementLog;
 
+    /**
+     * 语言驱动
+     */
     private LanguageDriver lang;
 
+    /**
+     * select 节点 resultSets 属性值
+     */
     private String[] resultSets;
 
     MappedStatement() {

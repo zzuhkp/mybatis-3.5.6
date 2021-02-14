@@ -24,6 +24,7 @@ import org.apache.ibatis.session.TransactionIsolationLevel;
 
 /**
  * Transaction 工厂
+ * <p>
  * Creates {@link Transaction} instances.
  *
  * @author Clinton Begin
@@ -40,6 +41,8 @@ public interface TransactionFactory {
     }
 
     /**
+     * 创建一个新的 Translation 对象
+     * <p>
      * Creates a {@link Transaction} out of an existing connection.
      *
      * @param conn Existing database connection

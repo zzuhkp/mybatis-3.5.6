@@ -64,6 +64,15 @@ public class CglibProxyFactory implements ProxyFactory {
         return EnhancedDeserializationProxyImpl.createProxy(target, unloadedProperties, objectFactory, constructorArgTypes, constructorArgs);
     }
 
+    /**
+     * 创建代理对象
+     *
+     * @param type                要代理的目标类
+     * @param callback            目标类方法调用时的回调
+     * @param constructorArgTypes 目标类构造方法参数类型列表
+     * @param constructorArgs     目标类构造方法参数列表
+     * @return
+     */
     static Object crateProxy(Class<?> type, Callback callback, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
         Enhancer enhancer = new Enhancer();
         enhancer.setCallback(callback);
@@ -79,6 +88,7 @@ public class CglibProxyFactory implements ProxyFactory {
         } catch (SecurityException e) {
             // nothing to do here
         }
+        // 创建代理
         Object enhanced;
         if (constructorArgTypes.isEmpty()) {
             enhanced = enhancer.create();
@@ -92,12 +102,39 @@ public class CglibProxyFactory implements ProxyFactory {
 
     private static class EnhancedResultObjectProxyImpl implements MethodInterceptor {
 
+        /**
+         * 代理的目标类
+         */
         private final Class<?> type;
+
+        /**
+         * 加载目标类实例属性的懒加载器
+         */
         private final ResultLoaderMap lazyLoader;
+
+        /**
+         * 是否强制进行懒加载
+         */
         private final boolean aggressive;
+
+        /**
+         * 触发懒加载的方法
+         */
         private final Set<String> lazyLoadTriggerMethods;
+
+        /**
+         * 对象工厂
+         */
         private final ObjectFactory objectFactory;
+
+        /**
+         * 构造方法参数类型列表
+         */
         private final List<Class<?>> constructorArgTypes;
+
+        /**
+         * 构造方法参数列表
+         */
         private final List<Object> constructorArgs;
 
         private EnhancedResultObjectProxyImpl(Class<?> type, ResultLoaderMap lazyLoader, Configuration configuration, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
@@ -110,6 +147,17 @@ public class CglibProxyFactory implements ProxyFactory {
             this.constructorArgs = constructorArgs;
         }
 
+        /**
+         * 创建代理
+         *
+         * @param target              目标类实例
+         * @param lazyLoader          加载目标类属性的懒加载器
+         * @param configuration       配置
+         * @param objectFactory       对象工厂
+         * @param constructorArgTypes 构造方法参数类型列表
+         * @param constructorArgs     构造方法参数列表
+         * @return
+         */
         public static Object createProxy(Object target, ResultLoaderMap lazyLoader, Configuration configuration, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
             final Class<?> type = target.getClass();
             EnhancedResultObjectProxyImpl callback = new EnhancedResultObjectProxyImpl(type, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
@@ -123,6 +171,7 @@ public class CglibProxyFactory implements ProxyFactory {
             final String methodName = method.getName();
             try {
                 synchronized (lazyLoader) {
+                    // 序列化方法
                     if (WRITE_REPLACE_METHOD.equals(methodName)) {
                         Object original;
                         if (constructorArgTypes.isEmpty()) {
@@ -139,11 +188,14 @@ public class CglibProxyFactory implements ProxyFactory {
                     } else {
                         if (lazyLoader.size() > 0 && !FINALIZE_METHOD.equals(methodName)) {
                             if (aggressive || lazyLoadTriggerMethods.contains(methodName)) {
+                                // 触发懒加载所有属性
                                 lazyLoader.loadAll();
                             } else if (PropertyNamer.isSetter(methodName)) {
+                                // 手动调用 setter 方法，不再进行懒加载
                                 final String property = PropertyNamer.methodToProperty(methodName);
                                 lazyLoader.remove(property);
                             } else if (PropertyNamer.isGetter(methodName)) {
+                                // 手动调用 getter 方法，触发懒加载
                                 final String property = PropertyNamer.methodToProperty(methodName);
                                 if (lazyLoader.hasLoader(property)) {
                                     lazyLoader.load(property);

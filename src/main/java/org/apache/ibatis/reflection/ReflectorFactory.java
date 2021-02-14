@@ -15,6 +15,9 @@
  */
 package org.apache.ibatis.reflection;
 
+/**
+ * Reflector 工厂
+ */
 public interface ReflectorFactory {
 
     /**

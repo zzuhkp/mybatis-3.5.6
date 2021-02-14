@@ -40,12 +40,24 @@ public class ManagedTransaction implements Transaction {
 
     private static final Log log = LogFactory.getLog(ManagedTransaction.class);
 
+    /**
+     * 数据源
+     */
     private DataSource dataSource;
 
+    /**
+     * 事务隔离级别
+     */
     private TransactionIsolationLevel level;
 
+    /**
+     * 连接
+     */
     private Connection connection;
 
+    /**
+     * 调用 #close 方法时是否关闭连接
+     */
     private final boolean closeConnection;
 
     public ManagedTransaction(Connection connection, boolean closeConnection) {
@@ -87,6 +99,11 @@ public class ManagedTransaction implements Transaction {
         }
     }
 
+    /**
+     * 从数据源中获取连接
+     *
+     * @throws SQLException
+     */
     protected void openConnection() throws SQLException {
         if (log.isDebugEnabled()) {
             log.debug("Opening JDBC Connection");

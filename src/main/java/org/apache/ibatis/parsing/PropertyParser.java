@@ -24,6 +24,7 @@ import java.util.Properties;
 public class PropertyParser {
 
     private static final String KEY_PREFIX = "org.apache.ibatis.parsing.PropertyParser.";
+
     /**
      * The special property key that indicate whether enable a default value on placeholder.
      * <p>
@@ -66,8 +67,19 @@ public class PropertyParser {
     }
 
     private static class VariableTokenHandler implements TokenHandler {
+        /**
+         * 变量
+         */
         private final Properties variables;
+
+        /**
+         * 是否解析默认值
+         */
         private final boolean enableDefaultValue;
+
+        /**
+         * 默认值的分隔符
+         */
         private final String defaultValueSeparator;
 
         private VariableTokenHandler(Properties variables) {
@@ -76,6 +88,13 @@ public class PropertyParser {
             this.defaultValueSeparator = getPropertyValue(KEY_DEFAULT_VALUE_SEPARATOR, DEFAULT_VALUE_SEPARATOR);
         }
 
+        /**
+         * 获取属性值
+         *
+         * @param key
+         * @param defaultValue
+         * @return
+         */
         private String getPropertyValue(String key, String defaultValue) {
             return (variables == null) ? defaultValue : variables.getProperty(key, defaultValue);
         }

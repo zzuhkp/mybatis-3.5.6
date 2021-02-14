@@ -54,7 +54,7 @@ public interface LanguageDriver {
      *
      * @param configuration Mybatis 配置
      *                      The MyBatis configuration
-     * @param script        mapper xml 文件中的 select|insert|update|delete 节点
+     * @param script        mapper xml 文件中的 select|insert|update|delete|selectKey 节点
      *                      XNode parsed from a XML file
      * @param parameterType 从 mapper 方法或者 xml 文件 parameterType 属性获取的参数类型
      *                      input parameter type got from a mapper method or specified in the parameterType xml attribute. Can be null.

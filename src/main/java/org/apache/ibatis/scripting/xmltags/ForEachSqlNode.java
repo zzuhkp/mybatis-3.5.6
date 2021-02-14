@@ -26,6 +26,10 @@ import org.apache.ibatis.session.Configuration;
  * @author Clinton Begin
  */
 public class ForEachSqlNode implements SqlNode {
+
+    /**
+     * foreach 解析的参数前缀
+     */
     public static final String ITEM_PREFIX = "__frch_";
 
     private final ExpressionEvaluator evaluator;
@@ -64,14 +68,22 @@ public class ForEachSqlNode implements SqlNode {
         this.configuration = configuration;
     }
 
+    /**
+     * 解析 foreach 节点，将 foreach 每次迭代的内容设置为 context 中的参数，然后将内容替换为 #{} 形式，
+     *
+     * @param context
+     * @return
+     */
     @Override
     public boolean apply(DynamicContext context) {
         Map<String, Object> bindings = context.getBindings();
+        // 从参数中获取集合或数组的可迭代对象
         final Iterable<?> iterable = evaluator.evaluateIterable(collectionExpression, bindings);
         if (!iterable.iterator().hasNext()) {
             return true;
         }
         boolean first = true;
+        // 追加前缀
         applyOpen(context);
         int i = 0;
         for (Object o : iterable) {
@@ -92,21 +104,31 @@ public class ForEachSqlNode implements SqlNode {
                 applyIndex(context, i, uniqueNumber);
                 applyItem(context, o, uniqueNumber);
             }
+            // 将 foreach 节点的内容替换为 #{} 参数形式
             contents.apply(new FilteredDynamicContext(configuration, context, index, item, uniqueNumber));
             if (first) {
+                // 没有添加过前缀 first 则为 true
                 first = !((PrefixedContext) context).isPrefixApplied();
             }
             context = oldContext;
             i++;
         }
+        // 追加后缀
         applyClose(context);
+        // 移除临时 item 和 index
         context.getBindings().remove(item);
         context.getBindings().remove(index);
         return true;
     }
 
+    /**
+     * @param context
+     * @param o
+     * @param i
+     */
     private void applyIndex(DynamicContext context, Object o, int i) {
         if (index != null) {
+            // 设置临时 index 的值
             context.bind(index, o);
             context.bind(itemizeItem(index, i), o);
         }
@@ -114,6 +136,7 @@ public class ForEachSqlNode implements SqlNode {
 
     private void applyItem(DynamicContext context, Object o, int i) {
         if (item != null) {
+            // 设置临时 item 的值
             context.bind(item, o);
             context.bind(itemizeItem(item, i), o);
         }
@@ -141,18 +164,40 @@ public class ForEachSqlNode implements SqlNode {
         }
     }
 
+    /**
+     * 添加前缀
+     *
+     * @param item
+     * @param i
+     * @return
+     */
     private static String itemizeItem(String item, int i) {
         return ITEM_PREFIX + item + "_" + i;
     }
 
+    /**
+     *
+     */
     private static class FilteredDynamicContext extends DynamicContext {
 
+        /**
+         * 被代理的上下文
+         */
         private final DynamicContext delegate;
 
+        /**
+         * 表示当前迭代的累加值
+         */
         private final int index;
 
+        /**
+         * 当前迭代的索引值
+         */
         private final String itemIndex;
 
+        /**
+         * 当前迭代的项
+         */
         private final String item;
 
         public FilteredDynamicContext(Configuration configuration, DynamicContext delegate, String itemIndex, String item, int i) {
@@ -180,6 +225,7 @@ public class ForEachSqlNode implements SqlNode {
 
         @Override
         public void appendSql(String sql) {
+            // foreach 节点每次迭代将 foreach 中的文本设置为参数 #{}
             GenericTokenParser parser = new GenericTokenParser("#{", "}", content -> {
                 String newContent = content.replaceFirst("^\\s*" + item + "(?![^.,:\\s])", itemizeItem(item, index));
                 if (itemIndex != null && newContent.equals(content)) {
@@ -198,9 +244,14 @@ public class ForEachSqlNode implements SqlNode {
 
     }
 
-
+    /**
+     * 包含 sql 前缀的上下文，追加 sql 片段时先追加前缀
+     */
     private class PrefixedContext extends DynamicContext {
 
+        /**
+         * 被代理的上下文
+         */
         private final DynamicContext delegate;
 
         /**

@@ -42,7 +42,7 @@ import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
 /**
- * 类的元数据保存，可以方便的获取属性，调用 getter/setter 方法
+ * 反射器，持有类的属性元信息，可以方便的调用 getter/setter 方法
  * <p>
  * This class represents a cached set of class definition information that
  * allows for easy mapping between property names and getter/setter methods.
@@ -129,6 +129,7 @@ public class Reflector {
      * @param clazz
      */
     private void addGetMethods(Class<?> clazz) {
+        // 属性名称 -> getter 方法列表(isXxx 或者 getXx 方法 )
         Map<String, List<Method>> conflictingGetters = new HashMap<>();
         Method[] methods = getClassMethods(clazz);
         Arrays.stream(methods).filter(m -> m.getParameterTypes().length == 0 && PropertyNamer.isGetter(m.getName()))
@@ -155,6 +156,7 @@ public class Reflector {
                 Class<?> winnerType = winner.getReturnType();
                 Class<?> candidateType = candidate.getReturnType();
                 if (candidateType.equals(winnerType)) {
+                    // is 方法优先
                     if (!boolean.class.equals(candidateType)) {
                         isAmbiguous = true;
                         break;

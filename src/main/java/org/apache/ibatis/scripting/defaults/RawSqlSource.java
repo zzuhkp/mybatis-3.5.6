@@ -51,8 +51,8 @@ public class RawSqlSource implements SqlSource {
     /**
      * 获取 SQL 内容
      *
-     * @param configuration
-     * @param rootSqlNode
+     * @param configuration 配置
+     * @param rootSqlNode   静态 SQL 节点
      * @return
      */
     private static String getSql(Configuration configuration, SqlNode rootSqlNode) {

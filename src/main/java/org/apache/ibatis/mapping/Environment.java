@@ -20,6 +20,8 @@ import javax.sql.DataSource;
 import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
+ * 环境变量，持有事务工厂及数据源对象
+ *
  * @author Clinton Begin
  */
 public final class Environment {

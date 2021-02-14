@@ -51,8 +51,24 @@ public interface TypeHandler<T> {
      */
     T getResult(ResultSet rs, String columnName) throws SQLException;
 
+    /**
+     * 根据列索引获取结果
+     *
+     * @param rs
+     * @param columnIndex
+     * @return
+     * @throws SQLException
+     */
     T getResult(ResultSet rs, int columnIndex) throws SQLException;
 
+    /**
+     * 根据列索引获取存储过程的结果
+     *
+     * @param cs
+     * @param columnIndex
+     * @return
+     * @throws SQLException
+     */
     T getResult(CallableStatement cs, int columnIndex) throws SQLException;
 
 }

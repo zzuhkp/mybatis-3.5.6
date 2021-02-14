@@ -29,7 +29,6 @@ import org.apache.ibatis.reflection.ExceptionUtil;
  *
  * @author Clinton Begin
  * @author Eduardo Macarron
- *
  */
 public final class StatementLogger extends BaseJdbcLogger implements InvocationHandler {
 
@@ -68,14 +67,13 @@ public final class StatementLogger extends BaseJdbcLogger implements InvocationH
     }
 
     /**
+     * 创建能打印日志的 Statement
+     * <p>
      * Creates a logging version of a Statement.
      *
-     * @param stmt
-     *          the statement
-     * @param statementLog
-     *          the statement log
-     * @param queryStack
-     *          the query stack
+     * @param stmt         the statement
+     * @param statementLog the statement log
+     * @param queryStack   the query stack
      * @return the proxy
      */
     public static Statement newInstance(Statement stmt, Log statementLog, int queryStack) {

@@ -208,6 +208,8 @@ public class TypeAliasRegistry {
     }
 
     /**
+     * 获取注册过的别名信息
+     * <p>
      * Gets the type aliases.
      *
      * @return the type aliases

@@ -31,6 +31,9 @@ public abstract class BaseWrapper implements ObjectWrapper {
 
     protected static final Object[] NO_ARGUMENTS = new Object[0];
 
+    /**
+     * 包装的对象
+     */
     protected final MetaObject metaObject;
 
     protected BaseWrapper(MetaObject metaObject) {
@@ -38,7 +41,7 @@ public abstract class BaseWrapper implements ObjectWrapper {
     }
 
     /**
-     * 获取属性值
+     * 获取集合类型的属性值
      *
      * @param prop
      * @param object

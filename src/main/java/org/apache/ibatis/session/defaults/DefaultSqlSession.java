@@ -62,8 +62,14 @@ public class DefaultSqlSession implements SqlSession {
      */
     private final boolean autoCommit;
 
+    /**
+     * 是否已进行更新操作
+     */
     private boolean dirty;
 
+    /**
+     * 游标列表
+     */
     private List<Cursor<?>> cursorList;
 
     public DefaultSqlSession(Configuration configuration, Executor executor, boolean autoCommit) {
@@ -280,6 +286,9 @@ public class DefaultSqlSession implements SqlSession {
         }
     }
 
+    /**
+     * 关闭游标
+     */
     private void closeCursors() {
         if (cursorList != null && !cursorList.isEmpty()) {
             for (Cursor<?> cursor : cursorList) {

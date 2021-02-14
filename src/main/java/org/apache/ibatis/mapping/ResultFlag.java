@@ -19,5 +19,13 @@ package org.apache.ibatis.mapping;
  * @author Clinton Begin
  */
 public enum ResultFlag {
-    ID, CONSTRUCTOR
+    /**
+     * 当前节点是 idArg 节点
+     */
+    ID,
+
+    /**
+     * 当前节点是 constructor 的子节点
+     */
+    CONSTRUCTOR
 }

@@ -16,6 +16,8 @@
 package org.apache.ibatis.scripting.xmltags;
 
 /**
+ * 抽象的 SQL 节点，包含 SQL 片段信息
+ *
  * @author Clinton Begin
  */
 public interface SqlNode {

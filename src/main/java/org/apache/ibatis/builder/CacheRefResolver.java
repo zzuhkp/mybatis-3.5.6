@@ -22,6 +22,9 @@ import org.apache.ibatis.cache.Cache;
  */
 public class CacheRefResolver {
 
+    /**
+     * Cache 创建工具
+     */
     private final MapperBuilderAssistant assistant;
 
     /**

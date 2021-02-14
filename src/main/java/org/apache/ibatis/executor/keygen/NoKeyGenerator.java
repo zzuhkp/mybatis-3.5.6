@@ -21,6 +21,8 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 
 /**
+ * 不生成 key 的 Generator
+ *
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */

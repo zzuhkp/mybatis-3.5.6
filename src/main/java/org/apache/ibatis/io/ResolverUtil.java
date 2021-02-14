@@ -25,6 +25,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
+ * 定位满足条件的类的工具
+ *
  * <p>ResolverUtil is used to locate classes that are available in the/a class path and meet
  * arbitrary conditions. The two most common conditions are that a class implements/extends
  * another class, or that is it annotated with a specific annotation. However, through the use
@@ -198,6 +200,8 @@ public class ResolverUtil<T> {
     }
 
     /**
+     * 从给定包名中查找给定父类的实现类
+     * <p>
      * Attempts to discover classes that are assignable to the type provided. In the case
      * that an interface is provided this method will collect implementations. In the case
      * of a non-interface class, subclasses will be collected.  Accumulated classes can be
@@ -221,6 +225,8 @@ public class ResolverUtil<T> {
     }
 
     /**
+     * 从给定包名中查找带给定注解的类
+     * <p>
      * Attempts to discover classes that are annotated with the annotation. Accumulated
      * classes can be accessed by calling {@link #getClasses()}.
      *
@@ -271,6 +277,7 @@ public class ResolverUtil<T> {
     }
 
     /**
+     * 获取包名对应的路径
      * Converts a Java package name to a path that can be looked up with a call to
      * {@link ClassLoader#getResources(String)}.
      *

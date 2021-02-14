@@ -43,6 +43,8 @@ public abstract class VFS {
     public static final Class<?>[] IMPLEMENTATIONS = {JBoss6VFS.class, DefaultVFS.class};
 
     /**
+     * 用于自定义的 VFS 实现
+     * <p>
      * The list to which implementations are added by {@link #addImplClass(Class)}.
      */
     public static final List<Class<? extends VFS>> USER_IMPLEMENTATIONS = new ArrayList<>();

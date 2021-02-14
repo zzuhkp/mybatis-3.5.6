@@ -26,15 +26,17 @@ import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
  * ManagedTransaction 工厂
- *
+ * <p>
  * Creates {@link ManagedTransaction} instances.
  *
  * @author Clinton Begin
- *
  * @see ManagedTransaction
  */
 public class ManagedTransactionFactory implements TransactionFactory {
 
+    /**
+     * 调用 close 方法时是否关闭连接
+     */
     private boolean closeConnection = true;
 
     @Override

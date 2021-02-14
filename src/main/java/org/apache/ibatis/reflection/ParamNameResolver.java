@@ -173,8 +173,10 @@ public class ParamNameResolver {
      * <p>
      * Wrap to a {@link ParamMap} if object is {@link Collection} or array.
      *
-     * @param object          a parameter object
-     * @param actualParamName an actual parameter name
+     * @param object          参数值
+     *                        a parameter object
+     * @param actualParamName 参数名
+     *                        an actual parameter name
      *                        (If specify a name, set an object to {@link ParamMap} with specified name)
      * @return a {@link ParamMap}
      * @since 3.5.5

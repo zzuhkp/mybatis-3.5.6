@@ -173,10 +173,13 @@ public abstract class BaseJdbcLogger {
     private String prefix(boolean isInput) {
         char[] buffer = new char[queryStack * 2 + 2];
         Arrays.fill(buffer, '=');
+        // 最后一个字符设置为空格
         buffer[queryStack * 2 + 1] = ' ';
         if (isInput) {
+            // 输入参数空格前设置为右箭头
             buffer[queryStack * 2] = '>';
         } else {
+            // 输出参数第一个字符设置为左箭头
             buffer[0] = '<';
         }
         return new String(buffer);

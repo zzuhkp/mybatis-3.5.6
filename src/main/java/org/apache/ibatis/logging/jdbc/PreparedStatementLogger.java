@@ -30,7 +30,6 @@ import org.apache.ibatis.reflection.ExceptionUtil;
  *
  * @author Clinton Begin
  * @author Eduardo Macarron
- *
  */
 public final class PreparedStatementLogger extends BaseJdbcLogger implements InvocationHandler {
 
@@ -83,11 +82,13 @@ public final class PreparedStatementLogger extends BaseJdbcLogger implements Inv
     }
 
     /**
+     * 创建能打印日志的 PreparedStatement
+     * <p>
      * Creates a logging version of a PreparedStatement.
      *
-     * @param stmt - the statement
+     * @param stmt         - the statement
      * @param statementLog - the statement log
-     * @param queryStack - the query stack
+     * @param queryStack   - the query stack
      * @return - the proxy
      */
     public static PreparedStatement newInstance(PreparedStatement stmt, Log statementLog, int queryStack) {

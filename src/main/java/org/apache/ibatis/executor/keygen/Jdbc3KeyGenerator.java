@@ -44,6 +44,8 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * JDBC key 生成
+ *
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -71,6 +73,13 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         processBatch(ms, stmt, parameter);
     }
 
+    /**
+     * 批量处理 key 的 ResultSet
+     *
+     * @param ms        SQL 语句抽象
+     * @param stmt      执行 SQL 的语句对象
+     * @param parameter SQL 中的参数
+     */
     public void processBatch(MappedStatement ms, Statement stmt, Object parameter) {
         final String[] keyProperties = ms.getKeyProperties();
         if (keyProperties == null || keyProperties.length == 0) {
@@ -89,6 +98,16 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         }
     }
 
+    /**
+     * 设置 key 的参数的属性
+     *
+     * @param configuration 配置
+     * @param rs            包含  key 的结果集
+     * @param rsmd          结果集的元数据
+     * @param keyProperties 参数的属性
+     * @param parameter     参数
+     * @throws SQLException
+     */
     @SuppressWarnings("unchecked")
     private void assignKeys(Configuration configuration, ResultSet rs, ResultSetMetaData rsmd, String[] keyProperties,
                             Object parameter) throws SQLException {
@@ -105,6 +124,16 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         }
     }
 
+    /**
+     * 设置 key 到参数的属性
+     *
+     * @param configuration
+     * @param rs
+     * @param rsmd
+     * @param keyProperties
+     * @param parameter
+     * @throws SQLException
+     */
     private void assignKeysToParam(Configuration configuration, ResultSet rs, ResultSetMetaData rsmd,
                                    String[] keyProperties, Object parameter) throws SQLException {
         Collection<?> params = collectionize(parameter);
@@ -117,6 +146,7 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         }
         Iterator<?> iterator = params.iterator();
         while (rs.next()) {
+            // 参数的数量需要大于等于 ResultSet 行的数量
             if (!iterator.hasNext()) {
                 throw new ExecutorException(String.format(MSG_TOO_MANY_KEYS, params.size()));
             }
@@ -125,6 +155,16 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         }
     }
 
+    /**
+     * 设置 key 到参数列表
+     *
+     * @param configuration
+     * @param rs
+     * @param rsmd
+     * @param keyProperties
+     * @param paramMapList
+     * @throws SQLException
+     */
     private void assignKeysToParamMapList(Configuration configuration, ResultSet rs, ResultSetMetaData rsmd,
                                           String[] keyProperties, ArrayList<ParamMap<?>> paramMapList) throws SQLException {
         Iterator<ParamMap<?>> iterator = paramMapList.iterator();
@@ -132,6 +172,7 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         long counter = 0;
         while (rs.next()) {
             if (!iterator.hasNext()) {
+                //参数的数量需要大于 结果集行的数量
                 throw new ExecutorException(String.format(MSG_TOO_MANY_KEYS, counter));
             }
             ParamMap<?> paramMap = iterator.next();
@@ -147,6 +188,18 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         }
     }
 
+    /**
+     * 多个参数或只有一个带 @Param 注解的参数
+     *
+     * 设置 key 到 ParamMap
+     *
+     * @param configuration 配置
+     * @param rs            包含 key 的结果集
+     * @param rsmd          结果集的元数据
+     * @param keyProperties 参数的属性
+     * @param paramMap      参数
+     * @throws SQLException
+     */
     private void assignKeysToParamMap(Configuration configuration, ResultSet rs, ResultSetMetaData rsmd,
                                       String[] keyProperties, Map<String, ?> paramMap) throws SQLException {
         if (paramMap.isEmpty()) {
@@ -173,6 +226,16 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         }
     }
 
+    /**
+     * @param config
+     * @param rsmd
+     * @param columnPosition
+     * @param paramMap
+     * @param keyProperty
+     * @param keyProperties
+     * @param omitParamName
+     * @return
+     */
     private Entry<String, KeyAssigner> getAssignerForParamMap(Configuration config, ResultSetMetaData rsmd,
                                                               int columnPosition, Map<String, ?> paramMap, String keyProperty, String[] keyProperties, boolean omitParamName) {
         Set<String> keySet = paramMap.keySet();
@@ -181,7 +244,9 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         boolean singleParam = !keySet.contains(SECOND_GENERIC_PARAM_NAME);
         int firstDot = keyProperty.indexOf('.');
         if (firstDot == -1) {
+            // 不存在嵌套属性
             if (singleParam) {
+                // 只有一个参数
                 return getAssignerForSingleParam(config, rsmd, columnPosition, paramMap, keyProperty, omitParamName);
             }
             throw new ExecutorException("Could not determine which parameter to assign generated keys to. "
@@ -204,6 +269,17 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         }
     }
 
+    /**
+     * 从单个参数中获取 Assigner
+     *
+     * @param config         配置
+     * @param rsmd           结果集的元数据
+     * @param columnPosition 列位置
+     * @param paramMap       只包含一个参数的 ParamMap
+     * @param keyProperty    参数的属性
+     * @param omitParamName  是否忽略参数名
+     * @return
+     */
     private Entry<String, KeyAssigner> getAssignerForSingleParam(Configuration config, ResultSetMetaData rsmd,
                                                                  int columnPosition, Map<String, ?> paramMap, String keyProperty, boolean omitParamName) {
         // Assume 'keyProperty' to be a property of the single param.
@@ -217,6 +293,12 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         return paramMap.keySet().iterator().next();
     }
 
+    /**
+     * 参数转换为 Collection
+     *
+     * @param param
+     * @return
+     */
     private static Collection<?> collectionize(Object param) {
         if (param instanceof Collection) {
             return (Collection<?>) param;
@@ -227,18 +309,58 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
         }
     }
 
+    /**
+     * key value 转换为 Entry
+     *
+     * @param key
+     * @param value
+     * @param <K>
+     * @param <V>
+     * @return
+     */
     private static <K, V> Entry<K, V> entry(K key, V value) {
         // Replace this with Map.entry(key, value) in Java 9.
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 
+    /**
+     * 将 ResultSet 中给定列的值设置到参数的属性中
+     */
     private class KeyAssigner {
+
+        /**
+         * 配置
+         */
         private final Configuration configuration;
+
+        /**
+         * 结果集的元数据
+         */
         private final ResultSetMetaData rsmd;
+
+        /**
+         * 类型处理器注册中心
+         */
         private final TypeHandlerRegistry typeHandlerRegistry;
+
+        /**
+         * 列的位置
+         */
         private final int columnPosition;
+
+        /**
+         * 参数名称
+         */
         private final String paramName;
+
+        /**
+         * 属性的名称
+         */
         private final String propertyName;
+
+        /**
+         * 类型处理器
+         */
         private TypeHandler<?> typeHandler;
 
         protected KeyAssigner(Configuration configuration, ResultSetMetaData rsmd, int columnPosition, String paramName,
@@ -252,6 +374,12 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
             this.propertyName = propertyName;
         }
 
+        /**
+         * 将给定列位置的值设置到参数中
+         *
+         * @param rs
+         * @param param
+         */
         protected void assign(ResultSet rs, Object param) {
             if (paramName != null) {
                 // If paramName is set, param is ParamMap
@@ -260,6 +388,7 @@ public class Jdbc3KeyGenerator implements KeyGenerator {
             MetaObject metaParam = configuration.newMetaObject(param);
             try {
                 if (typeHandler == null) {
+                    // 获取类型处理器
                     if (metaParam.hasSetter(propertyName)) {
                         Class<?> propertyType = metaParam.getSetterType(propertyName);
                         typeHandler = typeHandlerRegistry.getTypeHandler(propertyType,

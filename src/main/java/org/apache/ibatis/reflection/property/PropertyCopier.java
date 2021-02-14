@@ -30,6 +30,13 @@ public final class PropertyCopier {
         // Prevent Instantiation of Static Class
     }
 
+    /**
+     * 将给定类型中的属性值，从 sourceBean 复制到 destinationBean
+     *
+     * @param type
+     * @param sourceBean
+     * @param destinationBean
+     */
     public static void copyBeanProperties(Class<?> type, Object sourceBean, Object destinationBean) {
         Class<?> parent = type;
         while (parent != null) {

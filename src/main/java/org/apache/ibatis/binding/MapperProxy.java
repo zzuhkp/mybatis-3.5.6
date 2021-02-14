@@ -30,6 +30,8 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * mapper 方法执行
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
@@ -44,10 +46,19 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 
     private static final Method privateLookupInMethod;
 
+    /**
+     * 会话
+     */
     private final SqlSession sqlSession;
 
+    /**
+     * mapper 接口
+     */
     private final Class<T> mapperInterface;
 
+    /**
+     * 方法调用缓存
+     */
     private final Map<Method, MapperMethodInvoker> methodCache;
 
     public MapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethodInvoker> methodCache) {
@@ -95,6 +106,13 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
         }
     }
 
+    /**
+     * 获取缓存的 MapperMethodInvoker
+     *
+     * @param method
+     * @return
+     * @throws Throwable
+     */
     private MapperMethodInvoker cachedInvoker(Method method) throws Throwable {
         try {
             // A workaround for https://bugs.openjdk.java.net/browse/JDK-8161372

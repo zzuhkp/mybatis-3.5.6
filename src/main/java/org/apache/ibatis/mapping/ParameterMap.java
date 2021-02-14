@@ -27,10 +27,19 @@ import org.apache.ibatis.session.Configuration;
  */
 public class ParameterMap {
 
+    /**
+     * parameterMap 标识
+     */
     private String id;
 
+    /**
+     * 参数类型
+     */
     private Class<?> type;
 
+    /**
+     * 参数属性映射
+     */
     private List<ParameterMapping> parameterMappings;
 
     private ParameterMap() {

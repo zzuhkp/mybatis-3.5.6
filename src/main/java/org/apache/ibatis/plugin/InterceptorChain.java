@@ -21,6 +21,7 @@ import java.util.List;
 
 /**
  * 插件
+ *
  * @author Clinton Begin
  */
 public class InterceptorChain {
@@ -32,6 +33,7 @@ public class InterceptorChain {
 
     /**
      * 包装 ParameterHandler、ResultSetHandler、StatementHandler、Executor
+     *
      * @param target
      * @return
      */

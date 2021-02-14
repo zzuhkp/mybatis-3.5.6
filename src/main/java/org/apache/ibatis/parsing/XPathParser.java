@@ -238,6 +238,14 @@ public class XPathParser {
         return new XNode(this, node, variables);
     }
 
+    /**
+     * 解析节点
+     *
+     * @param expression
+     * @param root
+     * @param returnType
+     * @return
+     */
     private Object evaluate(String expression, Object root, QName returnType) {
         try {
             return xpath.evaluate(expression, root, returnType);
@@ -246,6 +254,12 @@ public class XPathParser {
         }
     }
 
+    /**
+     * 创建文档
+     *
+     * @param inputSource
+     * @return
+     */
     private Document createDocument(InputSource inputSource) {
         // important: this must only be called AFTER common constructor
         try {
@@ -283,6 +297,13 @@ public class XPathParser {
         }
     }
 
+    /**
+     * 构造器通用的方法
+     *
+     * @param validation
+     * @param variables
+     * @param entityResolver
+     */
     private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
         this.validation = validation;
         this.entityResolver = entityResolver;

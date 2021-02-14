@@ -30,6 +30,8 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
+ * 可以路由的语句处理器，根据语句类型使用代理进行处理
+ *
  * @author Clinton Begin
  */
 public class RoutingStatementHandler implements StatementHandler {

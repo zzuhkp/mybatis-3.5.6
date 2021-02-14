@@ -28,6 +28,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * 扩展的节点
+ *
  * @author Clinton Begin
  */
 public class XNode {
@@ -347,6 +349,11 @@ public class XNode {
         }
     }
 
+    /**
+     * 获取子节点
+     *
+     * @return
+     */
     public List<XNode> getChildren() {
         List<XNode> children = new ArrayList<>();
         NodeList nodeList = node.getChildNodes();
@@ -361,6 +368,11 @@ public class XNode {
         return children;
     }
 
+    /**
+     * 解析子节点为 Properties
+     *
+     * @return
+     */
     public Properties getChildrenAsProperties() {
         Properties properties = new Properties();
         for (XNode child : getChildren()) {
@@ -420,6 +432,12 @@ public class XNode {
         }
     }
 
+    /**
+     * 解析节点中的属性为 Properties
+     *
+     * @param n
+     * @return
+     */
     private Properties parseAttributes(Node n) {
         Properties attributes = new Properties();
         NamedNodeMap attributeNodes = n.getAttributes();
@@ -433,6 +451,12 @@ public class XNode {
         return attributes;
     }
 
+    /**
+     * 解析节点的内容
+     *
+     * @param node
+     * @return
+     */
     private String parseBody(Node node) {
         String data = getBodyData(node);
         if (data == null) {
@@ -448,6 +472,12 @@ public class XNode {
         return data;
     }
 
+    /**
+     * 解析节点的文本内容
+     *
+     * @param child
+     * @return
+     */
     private String getBodyData(Node child) {
         if (child.getNodeType() == Node.CDATA_SECTION_NODE
             || child.getNodeType() == Node.TEXT_NODE) {

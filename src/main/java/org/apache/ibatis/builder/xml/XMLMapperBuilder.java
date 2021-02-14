@@ -50,7 +50,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
- * mapper.xml 解析
+ * mapper.xml 文件解析
  *
  * @author Clinton Begin
  * @author Kazuki Shimizu
@@ -107,13 +107,18 @@ public class XMLMapperBuilder extends BaseBuilder {
         this.resource = resource;
     }
 
+    /**
+     * 解析 mapper.xml 文件的入口方法
+     */
     public void parse() {
         if (!configuration.isResourceLoaded(resource)) {
+            // 首次加载 mapper.xml 文件
             configurationElement(parser.evalNode("/mapper"));
             configuration.addLoadedResource(resource);
             bindMapperForNamespace();
         }
 
+        // 再次解析未完全解析的节点
         parsePendingResultMaps();
         parsePendingCacheRefs();
         parsePendingStatements();
@@ -124,7 +129,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 mapper 配置文件中的 mapper 节点
+     * 解析 mapper 配置文件中的 /mapper 节点
      *
      * @param context
      */
@@ -147,7 +152,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 /mapper/select|insert|update|delete 节点
+     * 解析 /mapper/select|insert|update|delete 节点列表
      *
      * @param list
      */
@@ -231,9 +236,9 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 mapper 配置文件中的 cache-ref 节点
+     * 解析 mapper 配置文件中的 /mapper/cache-ref 节点
      *
-     * @param context
+     * @param context /mapper/cache-ref 节点
      */
     private void cacheRefElement(XNode context) {
         if (context != null) {
@@ -248,9 +253,9 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 mapper 配置文件中的 cache 节点
+     * 解析 mapper 配置文件中的 /mapper/cache 节点
      *
-     * @param context
+     * @param context /mapper/cache 节点
      */
     private void cacheElement(XNode context) {
         if (context != null) {
@@ -268,10 +273,11 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 /mapper/parameterMap 节点
+     * 解析 /mapper/parameterMap 节点列表
+     * <p>
      * 该节点已废弃，未来可能会被移除
      *
-     * @param list
+     * @param list /mapper/parameterMap 节点列表
      */
     private void parameterMapElement(List<XNode> list) {
         for (XNode parameterMapNode : list) {
@@ -302,7 +308,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     /**
      * 解析 mapper.xml 配置文件中 /mapper/resultMap 节点
      *
-     * @param list
+     * @param list /mapper/resultMap 节点列表
      */
     private void resultMapElements(List<XNode> list) {
         for (XNode resultMapNode : list) {
@@ -315,9 +321,9 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析单个 resultMap 节点
+     * 解析单个 /mapper/resultMap 节点
      *
-     * @param resultMapNode
+     * @param resultMapNode /mapper/resultMap 节点
      * @return
      */
     private ResultMap resultMapElement(XNode resultMapNode) {
@@ -331,20 +337,22 @@ public class XMLMapperBuilder extends BaseBuilder {
      *                                 /mapper/resultMap/association 节点 或
      *                                 /mapper/resultMap/collection 节点 或
      *                                 /mapper/resultMap/discriminator/case 节点
-     * @param additionalResultMappings
-     * @param enclosingType
+     * @param additionalResultMappings 单个数据库表的列和 Java 属性的映射列表
+     * @param enclosingType            外层的 Java 类型
      * @return
      */
     private ResultMap resultMapElement(XNode resultMapNode, List<ResultMapping> additionalResultMappings, Class<?> enclosingType) {
         ErrorContext.instance().activity("processing " + resultMapNode.getValueBasedIdentifier());
-        String type = resultMapNode.getStringAttribute("type",
-            resultMapNode.getStringAttribute("ofType",
-                resultMapNode.getStringAttribute("resultType",
-                    resultMapNode.getStringAttribute("javaType"))));
+        String type = resultMapNode.getStringAttribute("type",      // /mapper/resultMap 节点
+            resultMapNode.getStringAttribute("ofType",              // /mapper/resultMap/collection 节点
+                resultMapNode.getStringAttribute("resultType",      // /mapper/resultMap/discriminator/case 节点
+                    resultMapNode.getStringAttribute("javaType"))));// /mapper/resultMap/association 节点
         Class<?> typeClass = resolveClass(type);
         if (typeClass == null) {
+            // 未配置类型，使用父节点的 Java 类型
             typeClass = inheritEnclosingType(resultMapNode, enclosingType);
         }
+        // TODO 一个 resultMap 只能包含一个 discriminator ？
         Discriminator discriminator = null;
         List<ResultMapping> resultMappings = new ArrayList<>(additionalResultMappings);
         List<XNode> resultChildren = resultMapNode.getChildren();
@@ -383,6 +391,7 @@ public class XMLMapperBuilder extends BaseBuilder {
      */
     protected Class<?> inheritEnclosingType(XNode resultMapNode, Class<?> enclosingType) {
         if ("association".equals(resultMapNode.getName()) && resultMapNode.getStringAttribute("resultMap") == null) {
+            // 根据父节点的 Java 类型和属性查找属性的类型
             String property = resultMapNode.getStringAttribute("property");
             if (property != null && enclosingType != null) {
                 MetaClass metaResultType = MetaClass.forClass(enclosingType, configuration.getReflectorFactory());
@@ -397,9 +406,16 @@ public class XMLMapperBuilder extends BaseBuilder {
     /**
      * 处理 /mapper/resultMap/constructor 节点
      *
-     * @param resultChild    constructor 节点
-     * @param resultType     返回的 Java 类型
-     * @param resultMappings
+     * @param resultChild    /mapper/resultMap/constructor 节点 或
+     *                       /mapper/resultMap/association/constructor 节点 或
+     *                       /mapper/resultMap/collection/constructor 节点 或
+     *                       /mapper/resultMap/discriminator/case/constructor 节点
+     * @param resultType     Java 类型
+     *                       /mapper/resultMap 节点 type 属性 或
+     *                       /mapper/resultMap/association 节点 javaType 属性 或
+     *                       /mapper/resultMap/collection 节点 ofType 属性 或
+     *                       /mapper/resultMap/discriminator/case 节点 resultType 属性
+     * @param resultMappings 处理结果
      */
     private void processConstructorElement(XNode resultChild, Class<?> resultType, List<ResultMapping> resultMappings) {
         List<XNode> argChildren = resultChild.getChildren();
@@ -494,16 +510,25 @@ public class XMLMapperBuilder extends BaseBuilder {
     /**
      * 构建查询结果中数据库单个列与 Java 对象属性的映射关系
      *
-     * @param context    /mapper/resultMap/constructor 的子节点(idArg|arg) 或
+     * @param context    /mapper/resultMap/constructor/idArg|arg 节点 或
+     *                   /mapper/resultMap/association/constructor/idArg|arg 节点 或
+     *                   /mapper/resultMap/collection/constructor/idArg|arg 节点 或
+     *                   /mapper/resultMap/discriminator/case/constructor/idArg|arg 节点 或
+     *                   <p>
      *                   /mapper/resultMap/association|collection|id|result) 或
      *                   /mapper/resultMap/discriminator/case
-     * @param resultType
+     * @param resultType Java 类型
+     *                   /mapper/resultMap 节点 type 属性 或
+     *                   /mapper/resultMap/association 节点 javaType 属性 或
+     *                   /mapper/resultMap/collection 节点 ofType 属性 或
+     *                   /mapper/resultMap/discriminator/case 节点 resultType 属性
      * @param flags
      * @return
      */
     private ResultMapping buildResultMappingFromContext(XNode context, Class<?> resultType, List<ResultFlag> flags) {
         String property;
         if (flags.contains(ResultFlag.CONSTRUCTOR)) {
+            // 当前节点的在 constructor 节点下
             property = context.getStringAttribute("name");
         } else {
             property = context.getStringAttribute("property");
@@ -532,8 +557,8 @@ public class XMLMapperBuilder extends BaseBuilder {
      * @param context        /mapper/resultMap/constructor 的子节点(idArg|arg) 或
      *                       /mapper/resultMap/association|collection|id|result)或
      *                       /mapper/resultMap/discriminator/case
-     * @param resultMappings
-     * @param enclosingType
+     * @param resultMappings 单个数据库表的列和 Java 属性的映射关系
+     * @param enclosingType  外层的 Java 类型
      * @return
      */
     private String processNestedResultMappings(XNode context, List<ResultMapping> resultMappings, Class<?> enclosingType) {
@@ -558,6 +583,7 @@ public class XMLMapperBuilder extends BaseBuilder {
             MetaClass metaResultType = MetaClass.forClass(enclosingType, configuration.getReflectorFactory());
             String property = context.getStringAttribute("property");
             if (!metaResultType.hasSetter(property)) {
+                // 类型中不存在给定的属性名
                 throw new BuilderException(
                     "Ambiguous collection type for property '" + property + "'. You must specify 'javaType' or 'resultMap'.");
             }
@@ -565,7 +591,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     /**
-     * 注册 mapper 到配置
+     * 注册 mapper class 到 Configuration，会解析类中的注解
      */
     private void bindMapperForNamespace() {
         String namespace = builderAssistant.getCurrentNamespace();

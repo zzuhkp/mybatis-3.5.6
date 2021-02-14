@@ -28,7 +28,7 @@ import org.apache.ibatis.session.Configuration;
 public class StaticSqlSource implements SqlSource {
 
     /**
-     * sql 语句
+     * 包含 ? 的 sql 语句
      */
     private final String sql;
 

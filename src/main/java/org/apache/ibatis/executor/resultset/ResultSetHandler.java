@@ -23,12 +23,14 @@ import java.util.List;
 import org.apache.ibatis.cursor.Cursor;
 
 /**
+ * ResultSet 处理器
+ *
  * @author Clinton Begin
  */
 public interface ResultSetHandler {
 
     /**
-     * 数据库查询结果处理
+     * 处理 ResultSet 为 List
      *
      * @param stmt
      * @param <E>
@@ -37,8 +39,22 @@ public interface ResultSetHandler {
      */
     <E> List<E> handleResultSets(Statement stmt) throws SQLException;
 
+    /**
+     * 处理 ResultSet 为 Cursor
+     *
+     * @param stmt
+     * @param <E>
+     * @return
+     * @throws SQLException
+     */
     <E> Cursor<E> handleCursorResultSets(Statement stmt) throws SQLException;
 
+    /**
+     * 处理存储过程输出参数
+     *
+     * @param cs
+     * @throws SQLException
+     */
     void handleOutputParameters(CallableStatement cs) throws SQLException;
 
 }

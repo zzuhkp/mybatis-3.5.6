@@ -40,7 +40,7 @@ public class XMLScriptBuilder extends BaseBuilder {
     private final XNode context;
 
     /**
-     * 节点中的文本是否存在变量 ${..} 或 nodeHandlerMap 保存的可处理的子节点
+     * 是否存在动态 SQL，即节点中的文本是否存在变量 ${..} 或 nodeHandlerMap 保存的可处理的子节点
      */
     private boolean isDynamic;
 
@@ -95,10 +95,13 @@ public class XMLScriptBuilder extends BaseBuilder {
     }
 
     /**
+     * 解析 select|insert|update|delete 节点
+     *
      * @param node mapper xml 文件中 select|insert|update|delete 节点或其子节点
      * @return
      */
     protected MixedSqlNode parseDynamicTags(XNode node) {
+        // sql 节点列表
         List<SqlNode> contents = new ArrayList<>();
         NodeList children = node.getNode().getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -115,11 +118,13 @@ public class XMLScriptBuilder extends BaseBuilder {
                     contents.add(new StaticTextSqlNode(data));
                 }
             } else if (child.getNode().getNodeType() == Node.ELEMENT_NODE) { // issue #628
+                // 处理动态 SQL 的节点
                 String nodeName = child.getNode().getNodeName();
                 NodeHandler handler = nodeHandlerMap.get(nodeName);
                 if (handler == null) {
                     throw new BuilderException("Unknown element <" + nodeName + "> in SQL statement.");
                 }
+                // 使用节点处理器处理动态 SQL 节点
                 handler.handleNode(child, contents);
                 isDynamic = true;
             }
@@ -128,7 +133,7 @@ public class XMLScriptBuilder extends BaseBuilder {
     }
 
     /**
-     * 节点处理器
+     * 节点处理器，解析节点后生成 SqlNode
      */
     private interface NodeHandler {
 

@@ -48,6 +48,8 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 
 /**
+ * XML 配置解析器，用于将 XML 配置解析为 Configuration
+ *
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -103,6 +105,11 @@ public class XMLConfigBuilder extends BaseBuilder {
         this.parser = parser;
     }
 
+    /**
+     * 解析 xml 配置文件的入口方法
+     *
+     * @return
+     */
     public Configuration parse() {
         if (parsed) {
             throw new BuilderException("Each XMLConfigBuilder can only be used once.");
@@ -112,6 +119,11 @@ public class XMLConfigBuilder extends BaseBuilder {
         return configuration;
     }
 
+    /**
+     * 解析 xml 配置文件的 /configuration 节点
+     *
+     * @param root /configuration 节点
+     */
     private void parseConfiguration(XNode root) {
         try {
             // issue #117 read properties first
@@ -136,9 +148,9 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 settings 节点中的属性，这些属性均为 Configuration 类中的成员变量
+     * 解析 /configuration/settings 节点中的属性，这些属性均为 Configuration 类中的成员变量
      *
-     * @param context
+     * @param context /configuration/settings 节点
      * @return
      */
     private Properties settingsAsProperties(XNode context) {
@@ -188,9 +200,9 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 xml 配置文件中 typeAliases 节点，注册别名
+     * 解析 xml 配置文件中 /configuration/typeAliases 节点，注册别名
      *
-     * @param parent
+     * @param parent /configuration/typeAliases 节点
      */
     private void typeAliasesElement(XNode parent) {
         if (parent != null) {
@@ -217,9 +229,9 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 xml 配置文件中的 plugins 节点，
+     * 解析 xml 配置文件中的 /configuration/plugins 节点，
      *
-     * @param parent
+     * @param parent /configuration/plugins 节点
      * @throws Exception
      */
     private void pluginElement(XNode parent) throws Exception {
@@ -235,9 +247,9 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 xml 配置文件中的 objectFactory 节点
+     * 解析 xml 配置文件中的 /configuration/objectFactory 节点
      *
-     * @param context
+     * @param context /configuration/objectFactory 节点
      * @throws Exception
      */
     private void objectFactoryElement(XNode context) throws Exception {
@@ -251,11 +263,11 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 xml 配置文件中 objectWrapperFactory 节点
+     * 解析 xml 配置文件中 /configuration/objectWrapperFactory 节点
      * <p>
      * TODO 未在文档发现此配置
      *
-     * @param context
+     * @param context /configuration/objectWrapperFactory 节点
      * @throws Exception
      */
     private void objectWrapperFactoryElement(XNode context) throws Exception {
@@ -267,11 +279,11 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 xml 配置文件中 reflectorFactory 节点
+     * 解析 xml 配置文件中 /configuration/reflectorFactory 节点
      * <p>
      * TODO 未在文档发现此配置
      *
-     * @param context
+     * @param context /configuration/reflectorFactory 节点
      * @throws Exception
      */
     private void reflectorFactoryElement(XNode context) throws Exception {
@@ -283,9 +295,9 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 properties 节点
+     * 解析 /configuration/properties 节点
      *
-     * @param context
+     * @param context /configuration/properties 节点
      * @throws Exception
      */
     private void propertiesElement(XNode context) throws Exception {
@@ -350,9 +362,9 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 xml 配置文件中 environments 节点
+     * 解析 xml 配置文件中 /configuration/environments 节点
      *
-     * @param context
+     * @param context /configuration/environments 节点
      * @throws Exception
      */
     private void environmentsElement(XNode context) throws Exception {
@@ -376,7 +388,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 xml 配置文件中 databaseIdProvider 节点
+     * 解析 xml 配置文件中 /configuration/databaseIdProvider 节点
      *
      * @param context
      * @throws Exception
@@ -401,9 +413,9 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 xml 配置文件中 environments 节点下的 transactionManager 节点
+     * 解析 xml 配置文件中 /configuration/environments/transactionManager 节点
      *
-     * @param context
+     * @param context /configuration/environments/transactionManager 节点
      * @return
      * @throws Exception
      */
@@ -419,7 +431,7 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     /**
-     * 解析 xml 配置文件中 environments 节点下 dataSource 节点
+     * 解析 xml 配置文件中 /configuration/environments/dataSource 节点
      *
      * @param context
      * @return

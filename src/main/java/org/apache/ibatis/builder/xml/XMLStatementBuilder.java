@@ -66,6 +66,9 @@ public class XMLStatementBuilder extends BaseBuilder {
         this.requiredDatabaseId = databaseId;
     }
 
+    /**
+     * 解析 select|insert|update|delete 节点
+     */
     public void parseStatementNode() {
         String id = context.getStringAttribute("id");
         String databaseId = context.getStringAttribute("databaseId");
@@ -78,7 +81,9 @@ public class XMLStatementBuilder extends BaseBuilder {
         String nodeName = context.getNode().getNodeName();
         SqlCommandType sqlCommandType = SqlCommandType.valueOf(nodeName.toUpperCase(Locale.ENGLISH));
         boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
+        // 默认非查询语句刷新缓存
         boolean flushCache = context.getBooleanAttribute("flushCache", !isSelect);
+        // 默认查询语句使用缓存
         boolean useCache = context.getBooleanAttribute("useCache", isSelect);
         boolean resultOrdered = context.getBooleanAttribute("resultOrdered", false);
 
@@ -136,9 +141,9 @@ public class XMLStatementBuilder extends BaseBuilder {
     /**
      * 处理 selectKey 节点
      *
-     * @param id
-     * @param parameterTypeClass
-     * @param langDriver
+     * @param id                 select|insert|update|delete 节点 id 属性
+     * @param parameterTypeClass 参数类型
+     * @param langDriver         语言驱动
      */
     private void processSelectKeyNodes(String id, Class<?> parameterTypeClass, LanguageDriver langDriver) {
         List<XNode> selectKeyNodes = context.evalNodes("selectKey");
@@ -174,7 +179,7 @@ public class XMLStatementBuilder extends BaseBuilder {
      * @param id                 selectKey 的节点标识
      * @param nodeToHandle       selectKey 节点
      * @param parameterTypeClass select|insert|update|delete 节点 parameterType 属性
-     * @param langDriver
+     * @param langDriver         语言驱动
      * @param databaseId         selectKey 节点 databaseId 属性值
      */
     private void parseSelectKeyNode(String id, XNode nodeToHandle, Class<?> parameterTypeClass, LanguageDriver langDriver, String databaseId) {

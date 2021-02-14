@@ -86,6 +86,11 @@ public class MapperBuilderAssistant extends BaseBuilder {
         return currentNamespace;
     }
 
+    /**
+     * 设置命名空间，即 /mapper 节点 namespace 属性
+     *
+     * @param currentNamespace
+     */
     public void setCurrentNamespace(String currentNamespace) {
         if (currentNamespace == null) {
             throw new BuilderException("The mapper element requires a namespace attribute to be specified.");
@@ -102,7 +107,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     /**
      * 添加当前的命名空间作为前缀
      *
-     * @param base
+     * @param base        表示关联查询的 select 属性值或
      * @param isReference
      * @return
      */
@@ -124,6 +129,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
                 throw new BuilderException("Dots are not allowed in element names, please remove it from " + base);
             }
         }
+        // 命名空间最为前缀
         return currentNamespace + "." + base;
     }
 
@@ -159,8 +165,8 @@ public class MapperBuilderAssistant extends BaseBuilder {
      * @param flushInterval 刷新间隔
      * @param size          缓存数量
      * @param readWrite     缓存的对象是否可读可写
-     * @param blocking
-     * @param props
+     * @param blocking      是否阻塞时的存放对象，为 true 则必须等待其他线程移除缓存对象后当前线程才能存入对象
+     * @param props         /mapper/cache/property 节点解析的属性
      * @return
      */
     public Cache useNewCache(Class<? extends Cache> typeClass,
@@ -202,14 +208,14 @@ public class MapperBuilderAssistant extends BaseBuilder {
     /**
      * 创建 ParameterMapping
      *
-     * @param parameterType
-     * @param property
-     * @param javaType
-     * @param jdbcType
+     * @param parameterType 参数的类型
+     * @param property      参数的属性名称
+     * @param javaType      参数的属性类型
+     * @param jdbcType      参数对应的 JDBC 类型
      * @param resultMap
-     * @param parameterMode
-     * @param typeHandler
-     * @param numericScale
+     * @param parameterMode 存储过程参数类型
+     * @param typeHandler   类型处理器
+     * @param numericScale  小数点后保留位数
      * @return
      */
     public ParameterMapping buildParameterMapping(
@@ -329,7 +335,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     /**
      * 添加 MappedStatement 到 Configuration
      *
-     * @param id             select|insert|update|delete 节点 id 属性值
+     * @param id             select|insert|update|delete|selectKey 节点 id 属性值
      * @param sqlSource      解析出的 SQL
      * @param statementType  select|insert|update|delete 节点 statementType 属性值对应的语句类型，默认为 PREPARED
      * @param sqlCommandType select|insert|update|delete 节点表示哪一种 SQL 语句类型，如 select 查询
@@ -337,7 +343,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
      * @param timeout        select|insert|update|delete 节点 timeout 属性值，表示驱动程序等待数据库返回结果的秒数
      * @param parameterMap   select|insert|update|delete 节点 parameterMap 属性值，已废弃，未来版本可能会移除
      * @param parameterType  select|insert|update|delete 节点 parameterType 属性值对应的 Java 类
-     * @param resultMap      select|insert|update|delete 节点 resultMap 属性值
+     * @param resultMap      select 节点 resultMap 属性值，多个用逗号分隔
      * @param resultType     select|insert|update|delete 节点 resultType 属性值
      * @param resultSetType  select|insert|update|delete 节点 resultSetType 属性值解析出的结果集类型
      * @param flushCache     select|insert|update|delete 节点 flushCache 属性值，表示是否清空本地缓存和二级缓存，默认非 select 语句清空缓存
@@ -345,10 +351,10 @@ public class MapperBuilderAssistant extends BaseBuilder {
      * @param resultOrdered  select 节点 resultOrdered 属性值，
      *                       仅针对嵌套结果 select 语句：如果为 true，将会假设包含了嵌套结果集或是分组，当返回一个主结果行时，就不会产生对前面结果集的引用
      * @param keyGenerator   主键生成器，根据 select 节点 useGeneratedKeys 属性值或 selectKey 节点创建
-     * @param keyProperty    insert|update 节点 keyProperty 属性值，指能够唯一识别对象的属性，
+     * @param keyProperty    insert|update|selectKey 节点 keyProperty 属性值，指能够唯一识别对象的属性，
      *                       MyBatis 会使用 getGeneratedKeys 的返回值或 insert 语句的 selectKey 子元素设置它的值。
      *                       如果生成列不止一个，可以用逗号分隔多个属性名称。
-     * @param keyColumn      insert|update 节点 keyColumn 属性值，
+     * @param keyColumn      insert|update|selectKey 节点 keyColumn 属性值，
      *                       设置生成键值在表中的列名，在某些数据库（像 PostgreSQL）中，当主键列不是表中的第一列的时候，是必须设置的。
      *                       如果生成列不止一个，可以用逗号分隔多个属性名称。
      * @param databaseId     select|insert|update|delete 节点 databaseId 属性值，表示语句适用的数据库
@@ -457,6 +463,14 @@ public class MapperBuilderAssistant extends BaseBuilder {
         return value == null ? defaultValue : value;
     }
 
+    /**
+     * 根据 resultMap 名称获取 resultMap
+     *
+     * @param parameterMapName
+     * @param parameterTypeClass
+     * @param statementId
+     * @return
+     */
     private ParameterMap getStatementParameterMap(
         String parameterMapName,
         Class<?> parameterTypeClass,
@@ -480,6 +494,14 @@ public class MapperBuilderAssistant extends BaseBuilder {
         return parameterMap;
     }
 
+    /**
+     * 获取 SQL 语句包含的 ResultMap 列表
+     *
+     * @param resultMap
+     * @param resultType
+     * @param statementId
+     * @return
+     */
     private List<ResultMap> getStatementResultMaps(
         String resultMap,
         Class<?> resultType,
@@ -514,20 +536,24 @@ public class MapperBuilderAssistant extends BaseBuilder {
      * 可选的节点为：/mapper/resultMap/constructor 的子节点(idArg|arg) 或
      * /mapper/resultMap 节点下非 discriminator 的其他子节点(association|collection|case|id|result)
      *
-     * @param resultType
-     * @param property
-     * @param column
-     * @param javaType
-     * @param jdbcType
-     * @param nestedSelect
-     * @param nestedResultMap
-     * @param notNullColumn
-     * @param columnPrefix
-     * @param typeHandler
-     * @param flags
-     * @param resultSet
-     * @param foreignColumn
-     * @param lazy
+     * @param resultType      Java 类型
+     *                        /mapper/resultMap 节点 type 属性 或
+     *                        /mapper/resultMap/association 节点 javaType 属性 或
+     *                        /mapper/resultMap/collection 节点 ofType 属性 或
+     *                        /mapper/resultMap/discriminator/case 节点 resultType 属性
+     * @param property        Java 属性名
+     * @param column          列名
+     * @param javaType        Java 类型
+     * @param jdbcType        JDBC 类型
+     * @param nestedSelect    嵌套的查询，将使用 column 指定的列传递给 select 语句
+     * @param nestedResultMap 嵌套的 resultMap id
+     * @param notNullColumn   哪些列非空时才创建子对象，多个使用逗号分隔
+     * @param columnPrefix    列的前缀
+     * @param typeHandler     类型处理器
+     * @param flags           节点位置标识
+     * @param resultSet       记录所在结果集的名称
+     * @param foreignColumn   外键
+     * @param lazy            是否延迟进行嵌套查询
      * @return
      */
     public ResultMapping buildResultMapping(
@@ -549,8 +575,10 @@ public class MapperBuilderAssistant extends BaseBuilder {
         TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
         List<ResultMapping> composites;
         if ((nestedSelect == null || nestedSelect.isEmpty()) && (foreignColumn == null || foreignColumn.isEmpty())) {
+            // 不存在嵌套查询，复合的列为空
             composites = Collections.emptyList();
         } else {
+            // 解析 column 属性指定的复合列
             composites = parseCompositeColumnName(column);
         }
         return new ResultMapping.Builder(configuration, property, column, javaTypeClass)
@@ -604,6 +632,12 @@ public class MapperBuilderAssistant extends BaseBuilder {
         return configuration.getLanguageDriver(langClass);
     }
 
+    /**
+     * 解析不能为空的列名
+     *
+     * @param columnName
+     * @return
+     */
     private Set<String> parseMultipleColumnNames(String columnName) {
         Set<String> columns = new HashSet<>();
         if (columnName != null) {
@@ -642,7 +676,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     }
 
     /**
-     * 解析 Java 类型
+     * 解析 Java 类型中的属性类型
      *
      * @param resultType
      * @param property
@@ -651,6 +685,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
      */
     private Class<?> resolveResultJavaType(Class<?> resultType, String property, Class<?> javaType) {
         if (javaType == null && property != null) {
+            // 没有指定 Java 类型，通过属性解析
             try {
                 MetaClass metaResultType = MetaClass.forClass(resultType, configuration.getReflectorFactory());
                 javaType = metaResultType.getSetterType(property);
@@ -667,10 +702,10 @@ public class MapperBuilderAssistant extends BaseBuilder {
     /**
      * 解析 Java 类型
      *
-     * @param resultType
-     * @param property
-     * @param javaType
-     * @param jdbcType
+     * @param resultType Java 类型
+     * @param property   Java 属性名称
+     * @param javaType   Java 属性类型
+     * @param jdbcType   Java 属性对应的 JDBC 类型
      * @return
      */
     private Class<?> resolveParameterJavaType(Class<?> resultType, String property, Class<?> javaType, JdbcType jdbcType) {

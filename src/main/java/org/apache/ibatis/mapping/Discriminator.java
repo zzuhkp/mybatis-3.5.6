@@ -21,10 +21,15 @@ import java.util.Map;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * 鉴别器，根据不同的值选择不同的 resultMap
+ *
  * @author Clinton Begin
  */
 public class Discriminator {
 
+    /**
+     * 数据库列和 Java 对象的属性映射关系
+     */
     private ResultMapping resultMapping;
 
     /**
@@ -61,6 +66,12 @@ public class Discriminator {
         return discriminatorMap;
     }
 
+    /**
+     * 获取 discriminator 对应列的值对应的 resultMap id
+     *
+     * @param s
+     * @return
+     */
     public String getMapIdFor(String s) {
         return discriminatorMap.get(s);
     }

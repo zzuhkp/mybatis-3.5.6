@@ -27,7 +27,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * 动态 SQL 的上下文
+ * 动态 SQL 的上下文，持有 mapper 方法参数的缓存，拼接 sql 片段，获取完整 sql
  *
  * @author Clinton Begin
  */
@@ -42,7 +42,7 @@ public class DynamicContext {
     }
 
     /**
-     * 方法参数缓存
+     * 方法参数缓存，包含 mapper 方法参数、bind 节点指定的参数、从 foreach 节点解析的附加参数等
      */
     private final ContextMap bindings;
 
@@ -59,7 +59,7 @@ public class DynamicContext {
      */
     public DynamicContext(Configuration configuration, Object parameterObject) {
         if (parameterObject != null && !(parameterObject instanceof Map)) {
-            // mapper 方法非 RowBounds、ResultHandler 类型的参数为一个普通的对象
+            // mapper 方法中非 RowBounds、ResultHandler 类型的参数为一个普通的对象
             MetaObject metaObject = configuration.newMetaObject(parameterObject);
             boolean existsTypeHandler = configuration.getTypeHandlerRegistry().hasTypeHandler(parameterObject.getClass());
             bindings = new ContextMap(metaObject, existsTypeHandler);
@@ -74,10 +74,21 @@ public class DynamicContext {
         return bindings;
     }
 
+    /**
+     * 设置参数
+     *
+     * @param name
+     * @param value
+     */
     public void bind(String name, Object value) {
         bindings.put(name, value);
     }
 
+    /**
+     * 追加 SQL 片段
+     *
+     * @param sql
+     */
     public void appendSql(String sql) {
         sqlBuilder.add(sql);
     }

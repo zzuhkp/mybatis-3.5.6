@@ -38,7 +38,7 @@ import org.apache.ibatis.session.Configuration;
 public class BoundSql {
 
     /**
-     * SQL 语句
+     * 包含 ? 的 SQL 语句
      */
     private final String sql;
 
@@ -57,6 +57,9 @@ public class BoundSql {
      */
     private final Map<String, Object> additionalParameters;
 
+    /**
+     * 带类元信息的附加参数
+     */
     private final MetaObject metaParameters;
 
     public BoundSql(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Object parameterObject) {

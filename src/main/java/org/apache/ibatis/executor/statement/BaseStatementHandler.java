@@ -38,16 +38,49 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  */
 public abstract class BaseStatementHandler implements StatementHandler {
 
+    /**
+     * 配置
+     */
     protected final Configuration configuration;
+
+    /**
+     * 对象工厂
+     */
     protected final ObjectFactory objectFactory;
+
+    /**
+     * 类型处理器注册中心
+     */
     protected final TypeHandlerRegistry typeHandlerRegistry;
+
+    /**
+     * 结果集处理器
+     */
     protected final ResultSetHandler resultSetHandler;
+
+    /**
+     * 参数处理器
+     */
     protected final ParameterHandler parameterHandler;
 
+    /**
+     * 执行器
+     */
     protected final Executor executor;
+
+    /**
+     * 映射的语句
+     */
     protected final MappedStatement mappedStatement;
+
+    /**
+     * 分页信息
+     */
     protected final RowBounds rowBounds;
 
+    /**
+     * 带参数信息的 SQL
+     */
     protected BoundSql boundSql;
 
     protected BaseStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
@@ -160,6 +193,11 @@ public abstract class BaseStatementHandler implements StatementHandler {
         }
     }
 
+    /**
+     * 获取 key
+     *
+     * @param parameter
+     */
     protected void generateKeys(Object parameter) {
         KeyGenerator keyGenerator = mappedStatement.getKeyGenerator();
         ErrorContext.instance().store();

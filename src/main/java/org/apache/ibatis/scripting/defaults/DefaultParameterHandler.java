@@ -33,16 +33,36 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 默认的参数处理器
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
 public class DefaultParameterHandler implements ParameterHandler {
 
+    /**
+     * 类型处理器注册中心
+     */
     private final TypeHandlerRegistry typeHandlerRegistry;
 
+    /**
+     * 映射的语句
+     */
     private final MappedStatement mappedStatement;
+
+    /**
+     * 参数
+     */
     private final Object parameterObject;
+
+    /**
+     * 带参数信息的 SQL
+     */
     private final BoundSql boundSql;
+
+    /**
+     * 配置
+     */
     private final Configuration configuration;
 
     public DefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
@@ -64,6 +84,7 @@ public class DefaultParameterHandler implements ParameterHandler {
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         if (parameterMappings != null) {
             for (int i = 0; i < parameterMappings.size(); i++) {
+                // 循环设置参数
                 ParameterMapping parameterMapping = parameterMappings.get(i);
                 if (parameterMapping.getMode() != ParameterMode.OUT) {
                     Object value;

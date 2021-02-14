@@ -32,6 +32,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
+ * 默认的 Executor
+ *
  * @author Clinton Begin
  */
 public class SimpleExecutor extends BaseExecutor {
@@ -82,7 +84,7 @@ public class SimpleExecutor extends BaseExecutor {
     }
 
     /**
-     * 创建语句处理器
+     * 创建语句
      *
      * @param handler
      * @param statementLog

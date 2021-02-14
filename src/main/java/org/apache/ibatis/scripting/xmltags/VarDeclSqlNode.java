@@ -17,11 +17,19 @@ package org.apache.ibatis.scripting.xmltags;
 
 /**
  * bind 节点
+ *
  * @author Frank D. Martinez [mnesarco]
  */
 public class VarDeclSqlNode implements SqlNode {
 
+    /**
+     * 参数名称
+     */
     private final String name;
+
+    /**
+     * 参数的表达式
+     */
     private final String expression;
 
     public VarDeclSqlNode(String var, String exp) {

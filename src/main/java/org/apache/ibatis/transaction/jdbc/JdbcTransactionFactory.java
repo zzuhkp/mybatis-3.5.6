@@ -25,11 +25,10 @@ import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
  * JdbcTransaction 工厂
- *
+ * <p>
  * Creates {@link JdbcTransaction} instances.
  *
  * @author Clinton Begin
- *
  * @see JdbcTransaction
  */
 public class JdbcTransactionFactory implements TransactionFactory {

@@ -79,6 +79,7 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
                         printColumnValues(columnCount);
                     }
                 } else {
+                    // 没有更多行时打印总行数
                     debug("     Total: " + rows, false);
                 }
             }
@@ -89,6 +90,13 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
         }
     }
 
+    /**
+     * 打印列名
+     *
+     * @param rsmd
+     * @param columnCount
+     * @throws SQLException
+     */
     private void printColumnHeaders(ResultSetMetaData rsmd, int columnCount) throws SQLException {
         StringJoiner row = new StringJoiner(", ", "   Columns: ", "");
         for (int i = 1; i <= columnCount; i++) {
@@ -100,6 +108,11 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
         trace(row.toString(), false);
     }
 
+    /**
+     * 打印列值
+     *
+     * @param columnCount
+     */
     private void printColumnValues(int columnCount) {
         StringJoiner row = new StringJoiner(", ", "       Row: ", "");
         for (int i = 1; i <= columnCount; i++) {
@@ -118,6 +131,8 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
     }
 
     /**
+     * 创建能打印日志的 ResultSet
+     * <p>
      * Creates a logging version of a ResultSet.
      *
      * @param rs           the ResultSet to proxy

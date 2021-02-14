@@ -35,20 +35,79 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  */
 public class ResultMapping {
 
+    /**
+     * 配置
+     */
     private Configuration configuration;
+
+    /**
+     * Java 类的属性名
+     */
     private String property;
+
+    /**
+     * 列名
+     */
     private String column;
+
+    /**
+     * 属性的类型
+     */
     private Class<?> javaType;
+
+    /**
+     * JDBC 类型
+     */
     private JdbcType jdbcType;
+
+    /**
+     * 类型处理器，用于设置 JDBC 参数或从结果集中获取值
+     */
     private TypeHandler<?> typeHandler;
+
+    /**
+     * 嵌套的 resultMap 标识，即 /mapper/resultMap 标识
+     */
     private String nestedResultMapId;
+
+    /**
+     * 嵌套查询的ID，即 /mapper/select 节点标识
+     */
     private String nestedQueryId;
+
+    /**
+     * 不能为空的列名，都不为空才创建关联对象
+     */
     private Set<String> notNullColumns;
+
+    /**
+     * 列的前缀，用于复用 resultMap
+     */
     private String columnPrefix;
+
+    /**
+     * 节点标识，如是否为 constructor 子节点，或是否为 idArg 节点
+     */
     private List<ResultFlag> flags;
+
+    /**
+     * column 解析出的复合列，用于嵌套查询
+     */
     private List<ResultMapping> composites;
+
+    /**
+     * 列所属记录所在的结果集名称
+     */
     private String resultSet;
+
+    /**
+     * association 或 collection 节点的 foreignColumn 属性，表示外键对应的列名，和 column 匹配
+     */
     private String foreignColumn;
+
+    /**
+     * 是否延迟加载关联对象
+     */
     private boolean lazy;
 
     ResultMapping() {

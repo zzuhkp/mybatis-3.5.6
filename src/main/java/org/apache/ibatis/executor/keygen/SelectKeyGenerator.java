@@ -28,13 +28,22 @@ import org.apache.ibatis.session.RowBounds;
 
 /**
  * 根据 selectKey 节点生成 ID
+ *
  * @author Clinton Begin
  * @author Jeff Butler
  */
 public class SelectKeyGenerator implements KeyGenerator {
 
     public static final String SELECT_KEY_SUFFIX = "!selectKey";
+
+    /**
+     * 是否在 insert 之前执行
+     */
     private final boolean executeBefore;
+
+    /**
+     * 获取 key 的语句
+     */
     private final MappedStatement keyStatement;
 
     public SelectKeyGenerator(MappedStatement keyStatement, boolean executeBefore) {
@@ -56,6 +65,13 @@ public class SelectKeyGenerator implements KeyGenerator {
         }
     }
 
+    /**
+     * 处理主键生成
+     *
+     * @param executor
+     * @param ms
+     * @param parameter
+     */
     private void processGeneratedKeys(Executor executor, MappedStatement ms, Object parameter) {
         try {
             if (parameter != null && keyStatement != null && keyStatement.getKeyProperties() != null) {
@@ -71,16 +87,20 @@ public class SelectKeyGenerator implements KeyGenerator {
                 } else if (values.size() > 1) {
                     throw new ExecutorException("SelectKey returned more than one value.");
                 } else {
+                    // 查询结果只能有一条
                     MetaObject metaResult = configuration.newMetaObject(values.get(0));
+                    // 参数的属性只有一个为 key
                     if (keyProperties.length == 1) {
                         if (metaResult.hasGetter(keyProperties[0])) {
                             setValue(metaParam, keyProperties[0], metaResult.getValue(keyProperties[0]));
                         } else {
                             // no getter for the property - maybe just a single value object
                             // so try that
+                            // 查询结果中不存在给定的属性，直接把查询结果作为属性值进行赋值
                             setValue(metaParam, keyProperties[0], values.get(0));
                         }
                     } else {
+                        // 参数的属性有多个为 key
                         handleMultipleProperties(keyProperties, metaParam, metaResult);
                     }
                 }
@@ -92,6 +112,13 @@ public class SelectKeyGenerator implements KeyGenerator {
         }
     }
 
+    /**
+     * 处理参数的属性包含多个 key
+     *
+     * @param keyProperties
+     * @param metaParam
+     * @param metaResult
+     */
     private void handleMultipleProperties(String[] keyProperties,
                                           MetaObject metaParam, MetaObject metaResult) {
         String[] keyColumns = keyStatement.getKeyColumns();
@@ -111,6 +138,13 @@ public class SelectKeyGenerator implements KeyGenerator {
         }
     }
 
+    /**
+     * 设置属性值
+     *
+     * @param metaParam
+     * @param property
+     * @param value
+     */
     private void setValue(MetaObject metaParam, String property, Object value) {
         if (metaParam.hasSetter(property)) {
             metaParam.setValue(property, value);

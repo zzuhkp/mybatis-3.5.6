@@ -28,7 +28,8 @@ import java.util.Properties;
 public interface ObjectFactory {
 
     /**
-     * 设置配置属性
+     * 设置配置的属性
+     *
      * Sets configuration properties.
      *
      * @param properties configuration properties

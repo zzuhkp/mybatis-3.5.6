@@ -117,6 +117,11 @@ public interface Executor {
 
     boolean isClosed();
 
+    /**
+     * 设置当前执行器的包装器
+     *
+     * @param executor
+     */
     void setExecutorWrapper(Executor executor);
 
 }

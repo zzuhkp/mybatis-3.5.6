@@ -30,22 +30,49 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
  */
 public class ParameterMapping {
 
+    /**
+     * 配置
+     */
     private Configuration configuration;
 
+    /**
+     * Java 属性名称
+     */
     private String property;
 
+    /**
+     * 存储过程参数类型
+     */
     private ParameterMode mode;
 
+    /**
+     * Java 属性类型
+     */
     private Class<?> javaType = Object.class;
 
+    /**
+     * Java 属性对应的 JDBC 类型
+     */
     private JdbcType jdbcType;
 
+    /**
+     * 小数点后的保留位数
+     */
     private Integer numericScale;
 
+    /**
+     * 类型处理器
+     */
     private TypeHandler<?> typeHandler;
 
+    /**
+     * 动态 sql ${param} 中指定的 resultMap
+     */
     private String resultMapId;
 
+    /**
+     * 动态 sql  #{param} 中指定的 jdbcTypeName
+     */
     private String jdbcTypeName;
 
     private String expression;

@@ -25,7 +25,7 @@ public interface TokenHandler {
     /**
      * token 处理
      *
-     * @param content
+     * @param content 变量内容，不包括前缀和后缀
      * @return
      */
     String handleToken(String content);

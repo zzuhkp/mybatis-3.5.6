@@ -75,6 +75,10 @@ public class CacheBuilder {
      * mapper 配置文件中 cache 节点下的属性配置
      */
     private Properties properties;
+
+    /**
+     * 是否阻塞时存放对象，存放并移除后其他线程才能存入对象
+     */
     private boolean blocking;
 
     public CacheBuilder(String id) {

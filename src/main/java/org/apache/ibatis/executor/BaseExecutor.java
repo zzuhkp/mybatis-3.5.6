@@ -57,10 +57,15 @@ public abstract class BaseExecutor implements Executor {
     protected Executor wrapper;
 
     protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
+
     /**
-     * 缓存
+     * 查询结果缓存
      */
     protected PerpetualCache localCache;
+
+    /**
+     * 存储过程调用，查询参数缓存
+     */
     protected PerpetualCache localOutputParameterCache;
 
     /**
@@ -68,7 +73,11 @@ public abstract class BaseExecutor implements Executor {
      */
     protected Configuration configuration;
 
+    /**
+     * 查询栈，每次查询加1，查询结束减1
+     */
     protected int queryStack;
+
     private boolean closed;
 
     protected BaseExecutor(Configuration configuration, Transaction transaction) {
@@ -122,6 +131,7 @@ public abstract class BaseExecutor implements Executor {
         if (closed) {
             throw new ExecutorException("Executor was closed.");
         }
+        // 先清空缓存再更新
         clearLocalCache();
         return doUpdate(ms, parameter);
     }
@@ -131,6 +141,11 @@ public abstract class BaseExecutor implements Executor {
         return flushStatements(false);
     }
 
+    /**
+     * @param isRollBack
+     * @return
+     * @throws SQLException
+     */
     public List<BatchResult> flushStatements(boolean isRollBack) throws SQLException {
         if (closed) {
             throw new ExecutorException("Executor was closed.");
@@ -164,6 +179,7 @@ public abstract class BaseExecutor implements Executor {
             if (list != null) {
                 handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
             } else {
+                // 缓存中没有数据，从数据库中查询
                 list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
             }
         } finally {
@@ -249,6 +265,7 @@ public abstract class BaseExecutor implements Executor {
         if (closed) {
             throw new ExecutorException("Cannot commit, transaction is already closed");
         }
+        // 先清空缓存再提交事务
         clearLocalCache();
         flushStatements();
         if (required) {
@@ -260,6 +277,7 @@ public abstract class BaseExecutor implements Executor {
     public void rollback(boolean required) throws SQLException {
         if (!closed) {
             try {
+                // 先清空缓存再回滚
                 clearLocalCache();
                 flushStatements(true);
             } finally {
@@ -278,16 +296,59 @@ public abstract class BaseExecutor implements Executor {
         }
     }
 
+    /**
+     * 数据库更新
+     *
+     * @param ms
+     * @param parameter
+     * @return
+     * @throws SQLException
+     */
     protected abstract int doUpdate(MappedStatement ms, Object parameter) throws SQLException;
 
+    /**
+     * 执行批量更新
+     *
+     * @param isRollback
+     * @return
+     * @throws SQLException
+     */
     protected abstract List<BatchResult> doFlushStatements(boolean isRollback) throws SQLException;
 
+    /**
+     * 执行查询
+     *
+     * @param ms            映射的语句
+     * @param parameter     查询参数
+     * @param rowBounds     分页信息
+     * @param resultHandler 结果处理器
+     * @param boundSql      带参数信息的 SQL
+     * @param <E>           要返回的类型
+     * @return
+     * @throws SQLException
+     */
     protected abstract <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)
         throws SQLException;
 
+    /**
+     * 执行查询，返回游标
+     *
+     * @param ms
+     * @param parameter
+     * @param rowBounds
+     * @param boundSql
+     * @param <E>
+     * @return
+     * @throws SQLException
+     */
     protected abstract <E> Cursor<E> doQueryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds, BoundSql boundSql)
         throws SQLException;
 
+    /**
+     * 关闭语句
+     *
+     * @param statement
+     */
     protected void closeStatement(Statement statement) {
         if (statement != null) {
             try {
@@ -299,6 +360,8 @@ public abstract class BaseExecutor implements Executor {
     }
 
     /**
+     * 设置事务超时时间
+     * <p>
      * Apply a transaction timeout.
      *
      * @param statement a current statement
@@ -310,6 +373,14 @@ public abstract class BaseExecutor implements Executor {
         StatementUtil.applyTransactionTimeout(statement, statement.getQueryTimeout(), transaction.getTimeout());
     }
 
+    /**
+     * 设置输出参数
+     *
+     * @param ms
+     * @param key
+     * @param parameter
+     * @param boundSql
+     */
     private void handleLocallyCachedOutputParameters(MappedStatement ms, CacheKey key, Object parameter, BoundSql boundSql) {
         if (ms.getStatementType() == StatementType.CALLABLE) {
             final Object cachedParameter = localOutputParameterCache.getObject(key);
@@ -327,6 +398,19 @@ public abstract class BaseExecutor implements Executor {
         }
     }
 
+    /**
+     * 从数据库中查询结果
+     *
+     * @param ms            映射的语句
+     * @param parameter     查询参数
+     * @param rowBounds     分页信息
+     * @param resultHandler 结果处理器
+     * @param key           表示本次查询的缓存 key
+     * @param boundSql      带参数信息的 SQL
+     * @param <E>           要返回的类型
+     * @return
+     * @throws SQLException
+     */
     private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
         List<E> list;
         localCache.putObject(key, EXECUTION_PLACEHOLDER);

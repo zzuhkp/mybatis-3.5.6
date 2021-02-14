@@ -30,6 +30,8 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 
 /**
+ * SqlSource 构建
+ *
  * @author Clinton Begin
  */
 public class SqlSourceBuilder extends BaseBuilder {
@@ -80,6 +82,9 @@ public class SqlSourceBuilder extends BaseBuilder {
         return builder.toString();
     }
 
+    /**
+     * sql 中 #{param} 动态参数处理，将 #{param} 替换为 ? 并持有参数映射列表
+     */
     private static class ParameterMappingTokenHandler extends BaseBuilder implements TokenHandler {
 
         /**

@@ -29,14 +29,25 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 解析配置信息的基类
+ *
  * @author Clinton Begin
  */
 public abstract class BaseBuilder {
 
+    /**
+     * 配置
+     */
     protected final Configuration configuration;
 
+    /**
+     * 配置中的类型别名注册中心
+     */
     protected final TypeAliasRegistry typeAliasRegistry;
 
+    /**
+     * 配置中的类型处理器注册中心
+     */
     protected final TypeHandlerRegistry typeHandlerRegistry;
 
     public BaseBuilder(Configuration configuration) {
@@ -45,22 +56,55 @@ public abstract class BaseBuilder {
         this.typeHandlerRegistry = this.configuration.getTypeHandlerRegistry();
     }
 
+    /**
+     * 获取配置
+     *
+     * @return
+     */
     public Configuration getConfiguration() {
         return configuration;
     }
 
+    /**
+     * 正则表达式转换为 Pattern
+     *
+     * @param regex
+     * @param defaultValue
+     * @return
+     */
     protected Pattern parseExpression(String regex, String defaultValue) {
         return Pattern.compile(regex == null ? defaultValue : regex);
     }
 
+    /**
+     * 将字符串转换为 Boolean
+     *
+     * @param value
+     * @param defaultValue
+     * @return
+     */
     protected Boolean booleanValueOf(String value, Boolean defaultValue) {
         return value == null ? defaultValue : Boolean.valueOf(value);
     }
 
+    /**
+     * 将字符串转换为 Integer
+     *
+     * @param value
+     * @param defaultValue
+     * @return
+     */
     protected Integer integerValueOf(String value, Integer defaultValue) {
         return value == null ? defaultValue : Integer.valueOf(value);
     }
 
+    /**
+     * 将字符串转换为 Set
+     *
+     * @param value
+     * @param defaultValue
+     * @return
+     */
     protected Set<String> stringSetValueOf(String value, String defaultValue) {
         value = value == null ? defaultValue : value;
         return new HashSet<>(Arrays.asList(value.split(",")));
@@ -83,6 +127,12 @@ public abstract class BaseBuilder {
         }
     }
 
+    /**
+     * 解析 ResultSet
+     *
+     * @param alias
+     * @return
+     */
     protected ResultSetType resolveResultSetType(String alias) {
         if (alias == null) {
             return null;
@@ -94,6 +144,12 @@ public abstract class BaseBuilder {
         }
     }
 
+    /**
+     * 解析 ParameterMode
+     *
+     * @param alias
+     * @return
+     */
     protected ParameterMode resolveParameterMode(String alias) {
         if (alias == null) {
             return null;
@@ -141,6 +197,13 @@ public abstract class BaseBuilder {
         }
     }
 
+    /**
+     * 解析 TypeHandler
+     *
+     * @param javaType
+     * @param typeHandlerAlias
+     * @return
+     */
     protected TypeHandler<?> resolveTypeHandler(Class<?> javaType, String typeHandlerAlias) {
         if (typeHandlerAlias == null) {
             return null;
@@ -155,7 +218,7 @@ public abstract class BaseBuilder {
     }
 
     /**
-     * 解析类型处理器
+     * 解析类型处理器，获取类型处理器的实例
      *
      * @param javaType
      * @param typeHandlerType

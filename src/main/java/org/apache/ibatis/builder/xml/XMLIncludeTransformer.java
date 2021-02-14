@@ -31,11 +31,20 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * include 节点处理
+ *
  * @author Frank D. Martinez [mnesarco]
  */
 public class XMLIncludeTransformer {
 
+    /**
+     * 配置
+     */
     private final Configuration configuration;
+
+    /**
+     * mapper 元数据构建工具
+     */
     private final MapperBuilderAssistant builderAssistant;
 
     public XMLIncludeTransformer(Configuration configuration, MapperBuilderAssistant builderAssistant) {
@@ -72,10 +81,11 @@ public class XMLIncludeTransformer {
      */
     private void applyIncludes(Node source, final Properties variablesContext, boolean included) {
         if ("include".equals(source.getNodeName())) { // include 节点
-            // sql 节点
+            // 临时 sql 节点
             Node toInclude = findSqlFragment(getStringAttribute(source, "refid"), variablesContext);
             // sql 节点中可用的变量
             Properties toIncludeContext = getVariablesContext(source, variablesContext);
+            // 临时 sql 节点中的占位符替换为变量值
             applyIncludes(toInclude, toIncludeContext, true);
             if (toInclude.getOwnerDocument() != source.getOwnerDocument()) {
                 toInclude = source.getOwnerDocument().importNode(toInclude, true);
