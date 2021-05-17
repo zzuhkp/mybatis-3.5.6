@@ -18,7 +18,7 @@ package org.apache.ibatis.cache.decorators;
 import org.apache.ibatis.cache.Cache;
 
 /**
- * 支持同步的操作对象的缓存
+ * 缓存装饰器，方法前添加 synchronized，每个线程需要获取到锁才能存取对象
  *
  * @author Clinton Begin
  */

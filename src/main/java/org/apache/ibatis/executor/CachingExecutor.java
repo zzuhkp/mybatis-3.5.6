@@ -41,6 +41,7 @@ import org.apache.ibatis.transaction.Transaction;
 public class CachingExecutor implements Executor {
 
     private final Executor delegate;
+
     private final TransactionalCacheManager tcm = new TransactionalCacheManager();
 
     public CachingExecutor(Executor delegate) {
@@ -102,6 +103,7 @@ public class CachingExecutor implements Executor {
                 @SuppressWarnings("unchecked")
                 List<E> list = (List<E>) tcm.getObject(cache, key);
                 if (list == null) {
+                    // 优先从缓存中获取，如果缓存不存在，则查询后放入缓存
                     list = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
                     tcm.putObject(cache, key, list); // issue #578 and #116
                 }

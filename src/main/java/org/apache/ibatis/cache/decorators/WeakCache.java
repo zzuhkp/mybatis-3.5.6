@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ * 缓存装饰器，使用 WeakReference 实现，每次垃圾回收都会清空缓存对象
+ * <p>
  * Weak Reference cache decorator.
  * Thanks to Dr. Heinz Kabutz for his guidance here.
  *

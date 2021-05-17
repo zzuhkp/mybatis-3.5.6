@@ -107,50 +107,71 @@ public class Configuration {
 
     /**
      * 是否允许在嵌套语句中使用分页（RowBounds）。如果允许使用则设置为 false。
+     * <p>
+     * 即如果 resultMap 中使用了 association/collection 子元素产生了嵌套的 resultMap，此时是否允许使用分页
      */
     protected boolean safeRowBoundsEnabled;
+
     /**
      * 是否允许在嵌套语句中使用结果处理器（ResultHandler）。如果允许使用则设置为 false。
+     * <p>
+     * 即如果 resultMap 中使用了 association/collection 子元素产生了嵌套的 resultMap，此时是否允许使用自定义的 ResultHandler
      */
     protected boolean safeResultHandlerEnabled = true;
+
     /**
      * 是否开启驼峰命名自动映射，即从经典数据库列名 A_COLUMN 映射到经典 Java 属性名 aColumn。
      */
     protected boolean mapUnderscoreToCamelCase;
+
     /**
      * 开启时，任一方法的调用都会加载该对象的所有延迟加载属性。 否则，每个延迟加载属性会按需加载（参考 lazyLoadTriggerMethods)。
+     * <p>
+     * resultMap 中存在 collection/association 子元素产生的嵌套查询时，是否延迟数据库查询
      */
     protected boolean aggressiveLazyLoading;
+
     /**
      * 是否允许单个语句返回多结果集（需要数据库驱动支持）。
+     * <p>
+     * NOTE:好像没用到
      */
     protected boolean multipleResultSetsEnabled = true;
+
     /**
      * 允许 JDBC 支持自动生成主键，需要数据库驱动支持。如果设置为 true，将强制使用自动生成主键。尽管一些数据库驱动不支持此特性，但仍可正常工作（如 Derby）。
+     * <p>
+     * 是否允许 insert 语句自动生成 key ，配置该属性后还需要在 insert 元素中配置相关属性或子元素才会生成 key
      */
     protected boolean useGeneratedKeys;
+
     /**
      * 使用列标签代替列名。实际表现依赖于数据库驱动，具体可参考数据库驱动的相关文档，或通过对比测试来观察。
      */
     protected boolean useColumnLabel = true;
+
     /**
      * 全局性地开启或关闭所有映射器配置文件中已配置的任何缓存。
      */
     protected boolean cacheEnabled = true;
+
     /**
      * 指定当结果集中值为 null 的时候是否调用映射对象的 setter（map 对象时为 put）方法，这在依赖于 Map.keySet() 或 null 值进行初始化时比较有用。
      * 注意基本类型（int、boolean 等）是不能设置成 null 的。
      */
     protected boolean callSettersOnNulls;
+
     /**
      * 允许使用方法签名中的名称作为语句参数名称。 为了使用该特性，你的项目必须采用 Java 8 编译，并且加上 -parameters 选项。（新增于 3.4.1）
      */
     protected boolean useActualParamName = true;
+
     /**
      * 当返回行的所有列都是空时，MyBatis默认返回 null。 当开启这个设置时，MyBatis会返回一个空实例。
      * 请注意，它也适用于嵌套的结果集（如集合或关联）。（新增于 3.4.2）
      */
     protected boolean returnInstanceForEmptyRow;
+
     /**
      * 从SQL中删除多余的空格字符。请注意，这也会影响SQL中的文字字符串。 (新增于 3.5.5)
      */
@@ -160,53 +181,68 @@ public class Configuration {
      * 指定 MyBatis 增加到日志名称的前缀。
      */
     protected String logPrefix;
+
     /**
      * 日志实现
      */
     protected Class<? extends Log> logImpl;
+
     /**
      * VFS 实现
      */
     protected Class<? extends VFS> vfsImpl;
+
     /**
      *
      */
     protected Class<?> defaultSqlProviderType;
+
     /**
      * MyBatis 利用本地缓存机制（Local Cache）防止循环引用和加速重复的嵌套查询。
      * 默认值为 SESSION，会缓存一个会话中执行的所有查询。
      * 若设置值为 STATEMENT，本地缓存将仅用于执行语句，对相同 SqlSession 的不同查询将不会进行缓存。
      */
     protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
+
     /**
      * 当没有为参数指定特定的 JDBC 类型时，空值的默认 JDBC 类型。
      * 某些数据库驱动需要指定列的 JDBC 类型，多数情况直接用一般类型即可，比如 NULL、VARCHAR 或 OTHER。
      */
     protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
+
     /**
      * 指定对象的哪些方法触发一次延迟加载。
      */
     protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
+
     /**
      * 设置超时时间，它决定数据库驱动等待数据库响应的秒数。
      */
     protected Integer defaultStatementTimeout;
+
     /**
      * 为驱动的结果集获取数量（fetchSize）设置一个建议值。此参数只可以在查询设置中被覆盖。
      */
     protected Integer defaultFetchSize;
+
     /**
      * 指定语句默认的滚动策略。（新增于 3.5.2）
      */
     protected ResultSetType defaultResultSetType;
+
     /**
      * 配置默认的执行器。
      */
     protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
+
     /**
      * 自动映射列到字段/属性的行为
      */
     protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
+
+    /**
+     * 自动映射未知列的行为
+     */
     protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
     /**
@@ -218,19 +254,23 @@ public class Configuration {
      * Reflector 工厂
      */
     protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+
     /**
      * 对象工厂
      */
     protected ObjectFactory objectFactory = new DefaultObjectFactory();
+
     /**
      * ObjectWrapper 工厂
      */
     protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
 
+
     /**
      * 延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。 特定关联关系中可通过设置 fetchType 属性来覆盖该项的开关状态。
      */
     protected boolean lazyLoadingEnabled = false;
+
     protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
 
     /**
@@ -253,11 +293,15 @@ public class Configuration {
      * Mapper 接口注册中心
      */
     protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
+
     /**
      * 插件列表
      */
     protected final InterceptorChain interceptorChain = new InterceptorChain();
 
+    /**
+     * 雷辛格处理器注册中心
+     */
     protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry(this);
 
     /**
@@ -281,14 +325,17 @@ public class Configuration {
      * namespace（Mapper 接口全限定名） -> Cache
      */
     protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
+
     /**
      * mapper.xml 配置文件中 resultMap 节点信息的缓存
      */
     protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
+
     /**
      * mapper.xml 配置文件中 parameterMap 节点信息的缓存
      */
     protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
+
     /**
      * 主键生成器
      */
@@ -318,6 +365,7 @@ public class Configuration {
      * mapper 配置文件中不能解析的 resultMap <- extend 不存在
      */
     protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
+
     protected final Collection<MethodResolver> incompleteMethods = new LinkedList<>();
 
     /**

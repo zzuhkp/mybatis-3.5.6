@@ -21,6 +21,8 @@ import java.util.LinkedList;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ * 缓存装饰器，使用 Deque 实现，最大存储 1024 个对象，超过最大值时使用先进先出的方式移除旧对象
+ *
  * FIFO (first in, first out) cache decorator.
  *
  * @author Clinton Begin

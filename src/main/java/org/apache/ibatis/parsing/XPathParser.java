@@ -71,6 +71,7 @@ public class XPathParser {
      */
     private XPath xpath;
 
+    // NOTE: 都这么多构造方法了还不改用 Builder 模式？
     public XPathParser(String xml) {
         commonConstructor(false, null, null);
         this.document = createDocument(new InputSource(new StringReader(xml)));

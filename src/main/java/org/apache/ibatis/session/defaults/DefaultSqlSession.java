@@ -53,7 +53,7 @@ public class DefaultSqlSession implements SqlSession {
     private final Configuration configuration;
 
     /**
-     *
+     * 执行器
      */
     private final Executor executor;
 

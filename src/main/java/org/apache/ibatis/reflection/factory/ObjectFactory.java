@@ -29,7 +29,7 @@ public interface ObjectFactory {
 
     /**
      * 设置配置的属性
-     *
+     * <p>
      * Sets configuration properties.
      *
      * @param properties configuration properties

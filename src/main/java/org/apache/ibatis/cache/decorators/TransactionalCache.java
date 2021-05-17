@@ -25,6 +25,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
+ * 缓存装饰器，commit 时才把对象刷新到目标 Cache 中
+ * <p>
  * The 2nd level cache transactional buffer.
  * <p>
  * This class holds all cache entries that are to be added to the 2nd level cache during a Session.
@@ -39,9 +41,24 @@ public class TransactionalCache implements Cache {
 
     private static final Log log = LogFactory.getLog(TransactionalCache.class);
 
+    /**
+     * 目标缓存
+     */
     private final Cache delegate;
+
+    /**
+     * 是否调用 #commit 方法时清空目标缓存
+     */
     private boolean clearOnCommit;
+
+    /**
+     * 调用 #commit 方法时添加到目标缓存的值
+     */
     private final Map<Object, Object> entriesToAddOnCommit;
+
+    /**
+     * 目标缓存中不存在的 key
+     */
     private final Set<Object> entriesMissedInCache;
 
     public TransactionalCache(Cache delegate) {
@@ -92,6 +109,9 @@ public class TransactionalCache implements Cache {
         entriesToAddOnCommit.clear();
     }
 
+    /**
+     * 提交事务
+     */
     public void commit() {
         if (clearOnCommit) {
             delegate.clear();
@@ -100,17 +120,26 @@ public class TransactionalCache implements Cache {
         reset();
     }
 
+    /**
+     * 回滚事务，清空缓存
+     */
     public void rollback() {
         unlockMissedEntries();
         reset();
     }
 
+    /**
+     * 重置当前缓存
+     */
     private void reset() {
         clearOnCommit = false;
         entriesToAddOnCommit.clear();
         entriesMissedInCache.clear();
     }
 
+    /**
+     * 刷新值到目标缓存中
+     */
     private void flushPendingEntries() {
         for (Map.Entry<Object, Object> entry : entriesToAddOnCommit.entrySet()) {
             delegate.putObject(entry.getKey(), entry.getValue());
@@ -122,6 +151,9 @@ public class TransactionalCache implements Cache {
         }
     }
 
+    /**
+     * 移除未命中缓存的 key
+     */
     private void unlockMissedEntries() {
         for (Object entry : entriesMissedInCache) {
             try {

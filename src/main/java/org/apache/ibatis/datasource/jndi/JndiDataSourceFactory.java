@@ -27,6 +27,8 @@ import org.apache.ibatis.datasource.DataSourceException;
 import org.apache.ibatis.datasource.DataSourceFactory;
 
 /**
+ * Jndi 数据源工厂
+ *
  * @author Clinton Begin
  */
 public class JndiDataSourceFactory implements DataSourceFactory {
@@ -65,6 +67,12 @@ public class JndiDataSourceFactory implements DataSourceFactory {
         return dataSource;
     }
 
+    /**
+     * 获取环境变量
+     *
+     * @param allProps
+     * @return
+     */
     private static Properties getEnvProperties(Properties allProps) {
         final String PREFIX = ENV_PREFIX;
         Properties contextProperties = null;

@@ -15,15 +15,16 @@
  */
 package org.apache.ibatis.cache.decorators;
 
-import java.text.MessageFormat;
+import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.cache.CacheException;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.cache.CacheException;
-
 /**
+ * 阻塞式缓存，获取不到值时当前线程会被阻塞，直到其他线程存入值
+ *
  * <p>Simple blocking decorator
  *
  * <p>Simple and inefficient version of EhCache's BlockingCache decorator.

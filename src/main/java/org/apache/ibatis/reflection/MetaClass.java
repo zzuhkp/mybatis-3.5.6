@@ -53,6 +53,7 @@ public class MetaClass {
      * @return
      */
     public MetaClass metaClassForProperty(String name) {
+        // 为什么获取 getter 方法表示的属性类型，而不是 setter ?
         Class<?> propType = reflector.getGetterType(name);
         return MetaClass.forClass(propType, reflectorFactory);
     }

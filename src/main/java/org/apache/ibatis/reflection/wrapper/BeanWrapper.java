@@ -91,8 +91,10 @@ public class BeanWrapper extends BaseWrapper {
             // 存在子属性，获取子属性的值
             MetaObject metaValue = metaObject.metaObjectForProperty(prop.getIndexedName());
             if (metaValue == SystemMetaObject.NULL_META_OBJECT) {
+                // 属性值为空，通过类信息获取
                 return metaClass.getSetterType(name);
             } else {
+                // 属性值不为空，通过类实例获取
                 return metaValue.getSetterType(prop.getChildren());
             }
         } else {
@@ -107,8 +109,10 @@ public class BeanWrapper extends BaseWrapper {
             // 存在子属性，获取子属性的值
             MetaObject metaValue = metaObject.metaObjectForProperty(prop.getIndexedName());
             if (metaValue == SystemMetaObject.NULL_META_OBJECT) {
+                // 属性值为空， 通过类信息获取
                 return metaClass.getGetterType(name);
             } else {
+                // 属性值不为空，通过类实例获取
                 return metaValue.getGetterType(prop.getChildren());
             }
         } else {
@@ -124,8 +128,10 @@ public class BeanWrapper extends BaseWrapper {
             if (metaClass.hasSetter(prop.getIndexedName())) {
                 MetaObject metaValue = metaObject.metaObjectForProperty(prop.getIndexedName());
                 if (metaValue == SystemMetaObject.NULL_META_OBJECT) {
+                    // 属性为空，通过类信息获取
                     return metaClass.hasSetter(name);
                 } else {
+                    // 属性值不为空，通过类实例获取
                     return metaValue.hasSetter(prop.getChildren());
                 }
             } else {
@@ -144,8 +150,10 @@ public class BeanWrapper extends BaseWrapper {
             if (metaClass.hasGetter(prop.getIndexedName())) {
                 MetaObject metaValue = metaObject.metaObjectForProperty(prop.getIndexedName());
                 if (metaValue == SystemMetaObject.NULL_META_OBJECT) {
+                    // 属性为空，通过类信获取
                     return metaClass.hasGetter(name);
                 } else {
+                    // 属性值不为空，通过类实例获取
                     return metaValue.hasGetter(prop.getChildren());
                 }
             } else {
@@ -170,6 +178,13 @@ public class BeanWrapper extends BaseWrapper {
         return metaValue;
     }
 
+    /**
+     * 获取 bean 的属性值
+     *
+     * @param prop
+     * @param object
+     * @return
+     */
     private Object getBeanProperty(PropertyTokenizer prop, Object object) {
         try {
             Invoker method = metaClass.getGetInvoker(prop.getName());
@@ -185,6 +200,13 @@ public class BeanWrapper extends BaseWrapper {
         }
     }
 
+    /**
+     * 设置对象的属性值
+     *
+     * @param prop
+     * @param object
+     * @param value
+     */
     private void setBeanProperty(PropertyTokenizer prop, Object object, Object value) {
         try {
             Invoker method = metaClass.getSetInvoker(prop.getName());

@@ -20,7 +20,7 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
- * 带日志的缓存
+ * 缓存装饰器，获取对象时会打印日志，对命中率进行简单的统计 |
  *
  * @author Clinton Begin
  */

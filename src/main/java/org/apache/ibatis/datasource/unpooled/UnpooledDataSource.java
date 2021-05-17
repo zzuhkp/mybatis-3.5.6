@@ -40,17 +40,54 @@ import org.apache.ibatis.io.Resources;
  */
 public class UnpooledDataSource implements DataSource {
 
+    /**
+     * 加载驱动的类加载器
+     */
     private ClassLoader driverClassLoader;
+
+    /**
+     * 驱动属性，用于从驱动管理器中获取连接
+     */
     private Properties driverProperties;
+
+    /**
+     * 驱动管理器中已注册的驱动
+     */
     private static Map<String, Driver> registeredDrivers = new ConcurrentHashMap<>();
 
+    /**
+     * 驱动类名
+     */
     private String driver;
+
+    /**
+     * 数据库URL
+     */
     private String url;
+
+    /**
+     * 用户名
+     */
     private String username;
+
+    /**
+     * 密码
+     */
     private String password;
 
+    /**
+     * 连接是否自动提交事务
+     */
     private Boolean autoCommit;
+
+    /**
+     * 连接默认的事务隔离级别
+     */
     private Integer defaultTransactionIsolationLevel;
+
+    /**
+     * 连接超时时间
+     */
     private Integer defaultNetworkTimeout;
 
     static {

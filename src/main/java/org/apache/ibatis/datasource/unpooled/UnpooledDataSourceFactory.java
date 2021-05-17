@@ -15,16 +15,17 @@
  */
 package org.apache.ibatis.datasource.unpooled;
 
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
 import org.apache.ibatis.datasource.DataSourceException;
 import org.apache.ibatis.datasource.DataSourceFactory;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
+import javax.sql.DataSource;
+import java.util.Properties;
+
 /**
+ * 非池化的数据源工厂
+ *
  * @author Clinton Begin
  */
 public class UnpooledDataSourceFactory implements DataSourceFactory {
@@ -65,6 +66,14 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
         return dataSource;
     }
 
+    /**
+     * 类型转换
+     *
+     * @param metaDataSource
+     * @param propertyName
+     * @param value
+     * @return
+     */
     private Object convertValue(MetaObject metaDataSource, String propertyName, String value) {
         Object convertedValue = value;
         Class<?> targetType = metaDataSource.getSetterType(propertyName);

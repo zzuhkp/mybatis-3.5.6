@@ -449,7 +449,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
 
     /**
-     * 确保嵌套 resultMap 中不存在分页
+     * resultMap 中存在嵌套查询时,不允许使用分页则抛出异常
      */
     private void ensureNoRowBounds() {
         if (configuration.isSafeRowBoundsEnabled() && rowBounds != null && (rowBounds.getLimit() < RowBounds.NO_ROW_LIMIT || rowBounds.getOffset() > RowBounds.NO_ROW_OFFSET)) {
@@ -460,7 +460,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
 
     /**
-     * 校验嵌套 resultMap 中不允许使用 reslutHandler 时不能存在 resultHandler
+     * 校验嵌套 resultMap 中不允许使用 resultHandler 时不能存在 resultHandler
      */
     protected void checkResultHandler() {
         if (resultHandler != null && configuration.isSafeResultHandlerEnabled() && !mappedStatement.isResultOrdered()) {
@@ -1181,6 +1181,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
             final CacheKey key = executor.createCacheKey(nestedQuery, nestedQueryParameterObject, RowBounds.DEFAULT, nestedBoundSql);
             final Class<?> targetType = propertyMapping.getJavaType();
             if (executor.isCached(nestedQuery, key)) {
+                // 如果已经缓存属性值，则从缓存中获取
                 executor.deferLoad(nestedQuery, metaResultObject, property, key, targetType);
                 value = DEFERRED;
             } else {

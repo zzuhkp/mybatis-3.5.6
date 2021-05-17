@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ * 缓存装饰器，使用 SoftReference 实现，以便内存不够时进行垃圾回收
+ *
  * Soft Reference cache decorator
  * Thanks to Dr. Heinz Kabutz for his guidance here.
  *

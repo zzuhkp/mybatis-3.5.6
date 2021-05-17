@@ -21,6 +21,8 @@ import java.util.Map;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ * 缓存装饰器，使用 LinkedHashMap 实现，最大存储 1024 个对象，超过最大值时使用最近最少使用的方式移除旧对象
+ * <p>
  * Lru (least recently used) cache decorator.
  *
  * @author Clinton Begin

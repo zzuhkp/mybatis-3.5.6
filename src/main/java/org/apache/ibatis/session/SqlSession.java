@@ -15,15 +15,17 @@
  */
 package org.apache.ibatis.session;
 
+import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.executor.BatchResult;
+
 import java.io.Closeable;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.cursor.Cursor;
-import org.apache.ibatis.executor.BatchResult;
-
 /**
+ * MyBatis 的主要接口，通过这个接口可以执行命令，获取 Mapper，管理事务
+ * <p>
  * The primary Java interface for working with MyBatis.
  * Through this interface you can execute commands, get mappers and manage transactions.
  *
@@ -92,7 +94,7 @@ public interface SqlSession extends Closeable {
     <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds);
 
     /**
-     * 查询多条记录，转换为 map
+     * 查询多条记录，根据给定的 key 将 list 转换为 map
      * <p>
      * The selectMap is a special case in that it is designed to convert a list
      * of results into a Map based on one of the properties in the resulting
@@ -109,7 +111,7 @@ public interface SqlSession extends Closeable {
     <K, V> Map<K, V> selectMap(String statement, String mapKey);
 
     /**
-     * 查询多条记录，转换为 map
+     * 查询多条记录，根据给定的 key 将 list 转换为 map
      * <p>
      * The selectMap is a special case in that it is designed to convert a list
      * of results into a Map based on one of the properties in the resulting
@@ -125,7 +127,7 @@ public interface SqlSession extends Closeable {
     <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey);
 
     /**
-     * 查询多条记录，转换为 map
+     * 查询多条记录，根据给定的 key 将 list 转换为 map
      * <p>
      * The selectMap is a special case in that it is designed to convert a list
      * of results into a Map based on one of the properties in the resulting
@@ -142,6 +144,8 @@ public interface SqlSession extends Closeable {
     <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey, RowBounds rowBounds);
 
     /**
+     * 查询游标，用于延迟获取数据
+     * <p>
      * A Cursor offers the same results as a List, except it fetches data lazily using an Iterator.
      *
      * @param <T>       the returned cursor element type.
@@ -151,6 +155,8 @@ public interface SqlSession extends Closeable {
     <T> Cursor<T> selectCursor(String statement);
 
     /**
+     * 查询游标，用于延迟获取数据
+     * <p>
      * A Cursor offers the same results as a List, except it fetches data lazily using an Iterator.
      *
      * @param <T>       the returned cursor element type.
@@ -161,6 +167,8 @@ public interface SqlSession extends Closeable {
     <T> Cursor<T> selectCursor(String statement, Object parameter);
 
     /**
+     * 查询游标，用于延迟获取数据
+     * <p>
      * A Cursor offers the same results as a List, except it fetches data lazily using an Iterator.
      *
      * @param <T>       the returned cursor element type.
@@ -273,7 +281,7 @@ public interface SqlSession extends Closeable {
     int delete(String statement, Object parameter);
 
     /**
-     * 提交事务
+     * 刷新批处理语句并提交数据库连接，如果没有 update/delete/insert 被调用则不会提交，强制提交调用 #commit(boolean)
      * <p>
      * Flushes batch statements and commits database connection.
      * Note that database connection will not be committed if no updates/deletes/inserts were called.
@@ -282,7 +290,7 @@ public interface SqlSession extends Closeable {
     void commit();
 
     /**
-     * 提交事务
+     * 刷新批处理语句并提交数据库连接
      * <p>
      * Flushes batch statements and commits database connection.
      *
@@ -291,7 +299,8 @@ public interface SqlSession extends Closeable {
     void commit(boolean force);
 
     /**
-     * 回滚事务
+     * 丢弃挂起的批处理语句，并且回滚数据库连接，如果没有 update/delete/insert 被调用，则不会回滚。
+     * 强制回滚调用 #rollback(boolean)
      * <p>
      * Discards pending batch statements and rolls database connection back.
      * Note that database connection will not be rolled back if no updates/deletes/inserts were called.
@@ -300,7 +309,7 @@ public interface SqlSession extends Closeable {
     void rollback();
 
     /**
-     * 回滚事务
+     * 丢弃挂起的批处理语句，并且回滚数据库连接
      * <p>
      * Discards pending batch statements and rolls database connection back.
      * Note that database connection will not be rolled back if no updates/deletes/inserts were called.
@@ -310,6 +319,8 @@ public interface SqlSession extends Closeable {
     void rollback(boolean force);
 
     /**
+     * 刷新批处理语句
+     * <p>
      * Flushes batch statements.
      *
      * @return BatchResult list of updated records

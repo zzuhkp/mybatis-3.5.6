@@ -29,6 +29,8 @@ public class ClassLoaderWrapper {
 
     /**
      * 默认的类加载器
+     * <p>
+     * 包可见级别，Resources 可直接设置值
      */
     ClassLoader defaultClassLoader;
 
@@ -231,6 +233,7 @@ public class ClassLoaderWrapper {
      * @return
      */
     ClassLoader[] getClassLoaders(ClassLoader classLoader) {
+        // NOTE: 可能存在重复或为 null 的类加载器
         return new ClassLoader[]{
             classLoader,
             defaultClassLoader,

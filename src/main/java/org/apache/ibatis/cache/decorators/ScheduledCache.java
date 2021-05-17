@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.ibatis.cache.Cache;
 
 /**
- * 定时清理的缓存，获取或设置缓存的对象时进行清理工作
+ * 缓存装饰器，存储的对象具有一个小时的生命周期，存取或者移除对象时会将过期的对象移除
  *
  * @author Clinton Begin
  */

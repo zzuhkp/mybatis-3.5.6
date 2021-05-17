@@ -76,6 +76,12 @@ public interface Executor {
 
     <E> Cursor<E> queryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds) throws SQLException;
 
+    /**
+     * 刷新批处理的 SQL 到数据库
+     *
+     * @return
+     * @throws SQLException
+     */
     List<BatchResult> flushStatements() throws SQLException;
 
     /**
@@ -105,16 +111,50 @@ public interface Executor {
      */
     CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql);
 
+    /**
+     * 语句是否被缓存
+     *
+     * @param ms
+     * @param key
+     * @return
+     */
     boolean isCached(MappedStatement ms, CacheKey key);
 
+    /**
+     * 清空 Executor 中缓存的查询结果
+     */
     void clearLocalCache();
 
+    /**
+     * 从缓存中加载对象的属性值，或记录要从缓存中获取的属性
+     *
+     * @param ms           映射的语句
+     * @param resultObject 返回的结果
+     * @param property     结果的属性
+     * @param key          语句对应的缓存 key
+     * @param targetType   属性的类型
+     */
     void deferLoad(MappedStatement ms, MetaObject resultObject, String property, CacheKey key, Class<?> targetType);
 
+    /**
+     * 获取事务对象
+     *
+     * @return
+     */
     Transaction getTransaction();
 
+    /**
+     * 关闭连接
+     *
+     * @param forceRollback
+     */
     void close(boolean forceRollback);
 
+    /**
+     * 连接是否已关闭
+     *
+     * @return
+     */
     boolean isClosed();
 
     /**

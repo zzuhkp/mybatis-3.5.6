@@ -15,6 +15,7 @@
  */
 package org.apache.ibatis.reflection.wrapper;
 
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +70,7 @@ public abstract class BaseWrapper implements ObjectWrapper {
             int i = Integer.parseInt(prop.getIndex());
             if (collection instanceof List) {
                 return ((List) collection).get(i);
+                // 不能使用 Array.get 优化下？
             } else if (collection instanceof Object[]) {
                 return ((Object[]) collection)[i];
             } else if (collection instanceof char[]) {
@@ -107,6 +109,7 @@ public abstract class BaseWrapper implements ObjectWrapper {
             int i = Integer.parseInt(prop.getIndex());
             if (collection instanceof List) {
                 ((List) collection).set(i, value);
+                // 不能使用 Array.set 优化下？
             } else if (collection instanceof Object[]) {
                 ((Object[]) collection)[i] = value;
             } else if (collection instanceof char[]) {

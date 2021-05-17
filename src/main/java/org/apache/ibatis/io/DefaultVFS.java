@@ -250,6 +250,7 @@ public class DefaultVFS extends VFS {
         StringBuilder jarUrl = new StringBuilder(url.toExternalForm());
         int index = jarUrl.lastIndexOf(".jar");
         if (index >= 0) {
+            // 去除参数，仅保留文件部分
             jarUrl.setLength(index + 4);
             if (log.isDebugEnabled()) {
                 log.debug("Extracted JAR URL: " + jarUrl);

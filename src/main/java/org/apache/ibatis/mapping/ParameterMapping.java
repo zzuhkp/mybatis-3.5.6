@@ -75,6 +75,9 @@ public class ParameterMapping {
      */
     private String jdbcTypeName;
 
+    /**
+     * 未发现被使用
+     */
     private String expression;
 
     private ParameterMapping() {

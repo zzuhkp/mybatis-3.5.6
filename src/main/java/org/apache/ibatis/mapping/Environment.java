@@ -20,16 +20,25 @@ import javax.sql.DataSource;
 import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
- * 环境变量，持有事务工厂及数据源对象
+ * 环境变量，持有事务工厂及数据源对象；由 Configuration 持有
  *
  * @author Clinton Begin
  */
 public final class Environment {
 
+    /**
+     * 标识
+     */
     private final String id;
 
+    /**
+     * 事务工厂
+     */
     private final TransactionFactory transactionFactory;
 
+    /**
+     * 数据源
+     */
     private final DataSource dataSource;
 
     public Environment(String id, TransactionFactory transactionFactory, DataSource dataSource) {

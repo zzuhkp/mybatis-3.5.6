@@ -129,7 +129,7 @@ public class Reflector {
      * @param clazz
      */
     private void addGetMethods(Class<?> clazz) {
-        // 属性名称 -> getter 方法列表(isXxx 或者 getXx 方法 )
+        // 属性名称 -> getter 方法列表(包含父类或接口中的方法)(isXxx 或者 getXx 方法 )
         Map<String, List<Method>> conflictingGetters = new HashMap<>();
         Method[] methods = getClassMethods(clazz);
         Arrays.stream(methods).filter(m -> m.getParameterTypes().length == 0 && PropertyNamer.isGetter(m.getName()))
@@ -138,9 +138,9 @@ public class Reflector {
     }
 
     /**
-     * 解析冲突的 getter 方法
+     * 解析冲突的 getter 方法，冲突是由于同时存在 isXxx/getXxx 方法或父类/接口中存在对应的 getter 方法
      *
-     * @param conflictingGetters
+     * @param conflictingGetters 属性名 -> getter 方法列表
      */
     private void resolveGetterConflicts(Map<String, List<Method>> conflictingGetters) {
         for (Entry<String, List<Method>> entry : conflictingGetters.entrySet()) {
@@ -158,6 +158,7 @@ public class Reflector {
                 if (candidateType.equals(winnerType)) {
                     // is 方法优先
                     if (!boolean.class.equals(candidateType)) {
+                        // 只有 boolean 类型的属性才可以同时具有 getXxx/isXxx 方法
                         isAmbiguous = true;
                         break;
                     } else if (candidate.getName().startsWith("is")) {

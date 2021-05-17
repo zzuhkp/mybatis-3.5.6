@@ -44,6 +44,7 @@ public final class PropertyNamer {
         }
 
         if (name.length() == 1 || (name.length() > 1 && !Character.isUpperCase(name.charAt(1)))) {
+            // 属性只有一位或第二位为小写才将第一位转换为小写
             name = name.substring(0, 1).toLowerCase(Locale.ENGLISH) + name.substring(1);
         }
 

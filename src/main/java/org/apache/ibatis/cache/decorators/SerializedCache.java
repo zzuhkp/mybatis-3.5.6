@@ -30,7 +30,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.io.SerialFilterChecker;
 
 /**
- * 支持序列号的缓存，每次存取的都是缓存对象的备份
+ * 缓存装饰器，存放的对象必须实现 Serializable 以支持序列化，存放的是对象序列话后的数组，存取前后会进行序列化和反序列化操作
  *
  * @author Clinton Begin
  */

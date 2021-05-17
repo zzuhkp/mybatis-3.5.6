@@ -33,7 +33,7 @@ import org.apache.ibatis.session.ResultHandler;
 public interface StatementHandler {
 
     /**
-     * 创建 Statement，并进行参数设置
+     * 创建 Statement，并设置 Statement 的参数
      *
      * @param connection
      * @param transactionTimeout
@@ -44,7 +44,7 @@ public interface StatementHandler {
         throws SQLException;
 
     /**
-     * 设置参数
+     * 设置 SQL 参数
      *
      * @param statement
      * @throws SQLException

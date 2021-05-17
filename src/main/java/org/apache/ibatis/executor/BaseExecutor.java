@@ -78,6 +78,9 @@ public abstract class BaseExecutor implements Executor {
      */
     protected int queryStack;
 
+    /**
+     * 是否已关闭 Session
+     */
     private boolean closed;
 
     protected BaseExecutor(Configuration configuration, Transaction transaction) {
@@ -391,6 +394,7 @@ public abstract class BaseExecutor implements Executor {
                     if (parameterMapping.getMode() != ParameterMode.IN) {
                         final String parameterName = parameterMapping.getProperty();
                         final Object cachedValue = metaCachedParameter.getValue(parameterName);
+                        // 将缓存的参数属性值设置到新的参数属性中
                         metaParameter.setValue(parameterName, cachedValue);
                     }
                 }
@@ -449,12 +453,39 @@ public abstract class BaseExecutor implements Executor {
 
     private static class DeferredLoad {
 
+        /**
+         * 结果
+         */
         private final MetaObject resultObject;
+
+        /**
+         * 结果的属性
+         */
         private final String property;
+
+        /**
+         * 属性的类型
+         */
         private final Class<?> targetType;
+
+        /**
+         * 语句的缓存 key
+         */
         private final CacheKey key;
+
+        /**
+         * BaseExecutor 中的缓存
+         */
         private final PerpetualCache localCache;
+
+        /**
+         * 对象工厂
+         */
         private final ObjectFactory objectFactory;
+
+        /**
+         * 结果抽取
+         */
         private final ResultExtractor resultExtractor;
 
         // issue #781
